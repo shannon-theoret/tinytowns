@@ -1,0 +1,28 @@
+.gameCode {
+    font-size: xx-large;
+}
+
+.players {
+    display         : flex;
+    align-items     : space-between;
+    justify-content : space-between;
+    vertical-align  : center;
+    flex-wrap       : wrap;
+    align-content   : center;
+    
+    font-family     : 'Open Sans', sans-serif;
+    background      : linear-gradient(top, #222, #333);
+  }
+  
+.selected {
+    background-color: lightgray;
+}
+
+.selected.alsoSelected {
+    background-color: lightgray;
+}
+
+.alsoSelected {
+    background-color: #f0f0f0;
+}
+  
