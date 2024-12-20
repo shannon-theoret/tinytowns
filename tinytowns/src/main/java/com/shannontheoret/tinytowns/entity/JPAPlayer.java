@@ -34,6 +34,15 @@ public class JPAPlayer {
     @Enumerated(EnumType.STRING)
     private Map<Integer, Piece> squares;
 
+    @ElementCollection
+    @CollectionTable(name="score", joinColumns = @JoinColumn(name = "player"))
+    @MapKeyColumn(name="piece")
+    @Column(name="scoreNumber")
+    private Map<Piece, Integer> score;
+
+    @Column(name="scorePenalty")
+    private Integer scorePenalty;
+
     @Column(name="playerOrder", nullable = false)
     private Integer playerOrder;
 
@@ -79,6 +88,22 @@ public class JPAPlayer {
 
     public void setSquares(SortedMap<Integer, Piece> squares) {
         this.squares = squares;
+    }
+
+    public Map<Piece, Integer> getScore() {
+        return score;
+    }
+
+    public void setScore(Map<Piece, Integer> score) {
+        this.score = score;
+    }
+
+    public Integer getScorePenalty() {
+        return scorePenalty;
+    }
+
+    public void setScorePenalty(Integer scorePenalty) {
+        this.scorePenalty = scorePenalty;
     }
 
     public Integer getPlayerOrder() {

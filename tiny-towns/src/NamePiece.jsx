@@ -6,7 +6,7 @@ import SingleNamePiece from "./SingleNamePiece";
 
 export default function NamePiece(props) {
 
-    const [resource, setResource] = useState("WOOD");
+    const [resource, setResource] = useState("");
 
     const namePiece = () => {
         axios.post(`/api/${props.gameCode}/namePiece`, null, {
@@ -26,6 +26,6 @@ export default function NamePiece(props) {
         <SingleNamePiece selectedResource={resource} resource="BRICK" setResource={setResource}/>
         <SingleNamePiece selectedResource={resource} resource="GLASS" setResource={setResource}/>    
         </div>
-        <Button onClick={namePiece}>Name Resource</Button>
+        <Button disabled={!resource} onClick={namePiece}>Name Resource</Button>
         </>;
 }

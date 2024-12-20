@@ -26,10 +26,10 @@ public class BuildingMap {
         buildingMap.put(BuildingName.CLOISTER, new OrangeBuilding(Piece.GLASS, Piece.WOOD, Piece.BRICK, Piece.STONE));
         buildingMap.put(BuildingName.CHAPEL, new OrangeBuilding(Piece.GLASS, Piece.STONE, Piece.GLASS, Piece.STONE));
         buildingMap.put(BuildingName.ABBEY, new OrangeBuilding(Piece.GLASS, Piece.BRICK, Piece.STONE, Piece.STONE));
-        buildingMap.put(BuildingName.WELL, new GreyBuilding());
-        buildingMap.put(BuildingName.SHED, new GreyBuilding());
-        buildingMap.put(BuildingName.MILLSTONE, new GreyBuilding());
-        buildingMap.put(BuildingName.FOUNTAIN, new GreyBuilding());
+        buildingMap.put(BuildingName.WELL, new GreyBuilding(false));
+        buildingMap.put(BuildingName.SHED, new GreyBuilding(true));
+        buildingMap.put(BuildingName.MILLSTONE, new GreyBuilding(false));
+        buildingMap.put(BuildingName.FOUNTAIN, new GreyBuilding(false));
         buildingMap.put(BuildingName.ORCHARD, new RedBuilding(Piece.STONE, Piece.WHEAT, Piece.WHEAT, Piece.WOOD));
         buildingMap.put(BuildingName.GREENHOUSE, new RedBuilding(Piece.WHEAT, Piece.GLASS, Piece.WOOD, Piece.WOOD));
         buildingMap.put(BuildingName.GRANARY, new RedBuilding(Piece.WHEAT, Piece.WHEAT, Piece.WOOD, Piece.BRICK));

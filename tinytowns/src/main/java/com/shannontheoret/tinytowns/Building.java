@@ -8,17 +8,19 @@ public abstract class Building {
 
     abstract Piece getPiece();
 
-    public boolean isValidBuild(Set<Integer> indexes, Integer indexToPlace, Map<Integer, Piece> portionOfGrid) {
+    public boolean isValidBuild(Set<Integer> indexes, Map<Integer, Piece> portionOfGrid) {
         for (Integer index: indexes) {
             if (!RelativePosition.isValidIndex(index)) {
                 return false;
             }
         }
-        if (!indexes.contains(indexToPlace)) {
-            return false;
-        }
-        List<Map<Integer, Piece>> validTranslations = getValidTranslations(portionOfGrid.get(indexToPlace), indexToPlace);
+        Integer startingIndex = indexes.iterator().next();
+        List<Map<Integer, Piece>> validTranslations = getValidTranslations(portionOfGrid.get(startingIndex), startingIndex);
         return isValidBuild(portionOfGrid, validTranslations);
+    }
+
+    public boolean isAbleToBeConstructedAnywhere() {
+        return false;
     }
 
     private List<Map<Integer, Piece>> getValidTranslations(Piece resource, Integer index) throws IndexOutOfBoundsException {
@@ -47,7 +49,7 @@ public abstract class Building {
         return validTranslations;
     }
 
-    public boolean isValidBuild(Map<Integer, Piece> portionOfPlayerGrid, List<Map<Integer, Piece>> validTranslations) {
+    private boolean isValidBuild(Map<Integer, Piece> portionOfPlayerGrid, List<Map<Integer, Piece>> validTranslations) {
         for (Map<Integer, Piece> validTranslation : validTranslations) {
             if (portionOfPlayerGrid.equals(validTranslation)) {
                 return true;
@@ -55,5 +57,6 @@ public abstract class Building {
         }
         return false;
     }
+
 
 }

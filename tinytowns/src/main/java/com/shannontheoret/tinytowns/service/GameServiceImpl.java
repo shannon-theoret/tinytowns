@@ -4,6 +4,9 @@ import com.shannontheoret.tinytowns.*;
 import com.shannontheoret.tinytowns.dao.GameDao;
 import com.shannontheoret.tinytowns.entity.JPAGame;
 import com.shannontheoret.tinytowns.entity.JPAPlayer;
+import com.shannontheoret.tinytowns.exceptions.GameCodeNotFoundException;
+import com.shannontheoret.tinytowns.exceptions.InternalGameException;
+import com.shannontheoret.tinytowns.exceptions.InvalidMoveException;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,12 +19,12 @@ import java.util.stream.Collectors;
 public class GameServiceImpl implements GameService {
 
     private GameDao gameDao;
-    private Map<BuildingName, Building> buildingMap;
+    private BuildingMap buildingMap;
 
     @Autowired
-    public GameServiceImpl(GameDao gameDao, BuildingMap map) {
+    public GameServiceImpl(GameDao gameDao, BuildingMap buildingMap) {
         this.gameDao = gameDao;
-        this.buildingMap = map.getBuildingMap();
+        this.buildingMap = buildingMap;
     }
 
     private static final Random RANDOM = new Random();
@@ -62,6 +65,9 @@ public class GameServiceImpl implements GameService {
     @Transactional
     public JPAGame addPlayer(String gameCode, String playerName) throws InvalidMoveException, GameCodeNotFoundException {
         JPAGame game = findByCode(gameCode);
+        if (game.getStep() != GameStep.SETUP) {
+            throw new InvalidMoveException("Game is not in the setup phase.");
+        }
         if (Rules.MAX_PLAYERS > game.getPlayers().size()) {
             JPAPlayer player = new JPAPlayer();
             player.setName(playerName);
@@ -79,6 +85,9 @@ public class GameServiceImpl implements GameService {
     @Transactional
     public JPAGame startGame(String gameCode) throws InvalidMoveException, GameCodeNotFoundException {
         JPAGame game = findByCode(gameCode);
+        if (game.getStep() != GameStep.SETUP) {
+            throw new InvalidMoveException("Game is not in the setup phase.");
+        }
         if (Rules.MIN_PLAYERS <= game.getPlayers().size()) {
             JPAPlayer first = game.getPlayers().get(0);
             first.setMasterBuilder(true);
@@ -135,7 +144,7 @@ public class GameServiceImpl implements GameService {
         player.setTurnToPlace(false);
         if (!game.getPlayers().stream().anyMatch(gamePlayer -> gamePlayer.getTurnToPlace())) {
             game.setStep(GameStep.TO_BUILD);
-            game.getPlayers().forEach(gamePlayer -> gamePlayer.setTurnToBuild(true));
+            game.getPlayers().forEach(gamePlayer -> gamePlayer.setTurnToBuild(!gamePlayer.isCompletedGrid()));
         }
         save(game);
         return game;
@@ -145,10 +154,19 @@ public class GameServiceImpl implements GameService {
     @Transactional
     public JPAGame build(String gameCode, Long playerId, Integer gridIndex, Set<Integer> indexes, BuildingName buildingName) throws InvalidMoveException, GameCodeNotFoundException {
         JPAGame game = findByCode(gameCode);
+        if (game.getStep() != GameStep.TO_BUILD) {
+            throw new InvalidMoveException("Cannot place piece. Incorrect step of game play.");
+        }
+        if (game.getCards().get(buildingName.getColor()) != buildingName) {
+            throw new InvalidMoveException("Cannot build " + buildingName + " as it is not one of the starting cards.");
+        }
         JPAPlayer player = getPlayerById(game, playerId);
         Map<Integer, Piece> portionOfGrid = player.getPortionOfGrid(indexes);
-        Building building = buildingMap.get(buildingName);
-        if (building.isValidBuild(indexes, gridIndex, portionOfGrid)) {
+        Building building = buildingMap.getBuildingMap().get(buildingName);
+        if (!indexes.contains(gridIndex) && (!building.isAbleToBeConstructedAnywhere() || player.getSquares().containsKey(gridIndex))) {
+            throw new InvalidMoveException("Cannot build " + buildingName + " as the square is already occupied");
+        }
+        if (building.isValidBuild(indexes, portionOfGrid)) {
             for (Integer index : indexes) {
                 player.getSquares().remove(index);
             }
@@ -162,20 +180,40 @@ public class GameServiceImpl implements GameService {
 
     @Override
     @Transactional
-    public JPAGame endTurn(String gameCode, Long playerId) throws GameCodeNotFoundException, InvalidMoveException, InternalGameException {
+    public JPAGame endTurn(String gameCode) throws GameCodeNotFoundException, InvalidMoveException, InternalGameException {
         JPAGame game = findByCode(gameCode);
-        JPAPlayer player = getPlayerById(game, playerId);
-        player.setTurnToBuild(false);
-        if (!game.getPlayers().stream().anyMatch(gamePlayer -> gamePlayer.getTurnToBuild())) {
-            startNewRound(game);
+        for (JPAPlayer player: game.getPlayers()) {
+            player.setTurnToBuild(false);
+        }
+        game.getPlayers().stream().forEach(player -> {
+            if (player.getSquares().size() == 16) {
+                player.setCompletedGrid(true);
+            }
+        });
+
+        if (game.getPlayers().stream().allMatch(gamePlayer -> gamePlayer.isCompletedGrid())) {
+            game.setStep(GameStep.END_GAME);
+            calculateScores(game);
+        } else {
+            JPAPlayer currentMasterBuilder = game.getPlayers().stream().filter(gamePlayer -> gamePlayer.getMasterBuilder())
+                    .findAny()
+                    .orElse(null);
+            if (currentMasterBuilder == null) {
+                throw new InternalGameException("No master builder set.");
+            }
+            do {
+                currentMasterBuilder.setMasterBuilder(false);
+                if (currentMasterBuilder.getPlayerOrder() == (game.getPlayers().size() - 1)) {
+                    currentMasterBuilder = game.getPlayers().get(0);
+                } else {
+                    currentMasterBuilder = game.getPlayers().get(currentMasterBuilder.getPlayerOrder() + 1);
+                }
+            } while (currentMasterBuilder.isCompletedGrid());
+            currentMasterBuilder.setMasterBuilder(true);
+            game.setStep(GameStep.TO_NAME);
         }
         save(game);
         return game;
-    }
-
-    private boolean isValidBuild(BuildingName buildingName, Set<Integer> indexes, Integer indexToPlace, Map<Integer, Piece> grid) {
-        Building building = buildingMap.get(buildingName);
-        return building.isValidBuild(indexes, indexToPlace, grid);
     }
 
     private static String generateCode() {
@@ -203,6 +241,7 @@ public class GameServiceImpl implements GameService {
         cardMap.put(Piece.GREY_BUILDING, selectRandomBuildingName(BuildingName.getBuildingsByColor(Piece.GREY_BUILDING)));
         cardMap.put(Piece.GREEN_BUILDING, selectRandomBuildingName(BuildingName.getBuildingsByColor(Piece.GREEN_BUILDING)));
         cardMap.put(Piece.YELLOW_BUILDING, selectRandomBuildingName(BuildingName.getBuildingsByColor(Piece.YELLOW_BUILDING)));
+        cardMap.put(Piece.ORANGE_BUILDING, selectRandomBuildingName(BuildingName.getBuildingsByColor(Piece.ORANGE_BUILDING)));
 
         return cardMap;
     }
@@ -213,36 +252,26 @@ public class GameServiceImpl implements GameService {
         return buildings[randomIndex];
     }
 
-    private static void startNewRound(JPAGame game) throws  InternalGameException {
-        game.getPlayers().stream().forEach(player -> {
-            if (player.getSquares().size() == 16) {
-                player.setCompletedGrid(true);
-            }
-        });
-
-        if (game.getPlayers().stream().allMatch(gamePlayer -> gamePlayer.isCompletedGrid())) {
-            game.setStep(GameStep.END_GAME);
-            //TODO: calculate scores
-        } else {
-            JPAPlayer currentMasterBuilder = game.getPlayers().stream().filter(gamePlayer -> gamePlayer.getMasterBuilder())
-                    .findAny()
-                    .orElse(null);
-            if (currentMasterBuilder == null) {
-                throw new InternalGameException("No master builder set.");
-            }
-            do {
-                currentMasterBuilder.setMasterBuilder(false);
-                JPAPlayer newMasterBuilder;
-                if (currentMasterBuilder.getPlayerOrder() == (game.getPlayers().size() - 1)) {
-                    newMasterBuilder = game.getPlayers().get(0);
+    private static void calculateScores(JPAGame game) {
+        for (JPAPlayer player: game.getPlayers()) {
+            ScoreCalculator scoreCalculator = new ScoreCalculator(game.getCards(), player.getSquares());
+            if (game.getCards().get(Piece.GREEN_BUILDING) == BuildingName.FEAST_HALL) {
+                JPAPlayer playerToRight;
+                if (player.getPlayerOrder() == (game.getPlayers().size() -1)) {
+                    playerToRight = game.getPlayers().get(0);
                 } else {
-                    currentMasterBuilder = game.getPlayers().get(currentMasterBuilder.getPlayerOrder() + 1);
+                    playerToRight = game.getPlayers().get(player.getPlayerOrder() + 1);
                 }
-            } while (currentMasterBuilder.isCompletedGrid());
-            currentMasterBuilder.setMasterBuilder(true);
-            game.setStep(GameStep.TO_NAME);
+                Integer numberOfFeastHalls = playerToRight.getSquares().entrySet().stream()
+                        .filter(entry -> entry.getValue() == Piece.GREEN_BUILDING)
+                        .map(Map.Entry::getKey)
+                        .collect(Collectors.toSet())
+                        .size();
+                scoreCalculator.setPlayerToRightNumberOfFeastHalls(numberOfFeastHalls);
+            }
+            player.setScore(scoreCalculator.calculateScore());
+            player.setScorePenalty(scoreCalculator.calculatePenalty());
         }
-
     }
 
 }

@@ -5,7 +5,9 @@ import java.util.Map;
 
 public class GreyBuilding extends Building {
 
-    public GreyBuilding() {
+    boolean ableToBeConstructedAnywhere;
+    public GreyBuilding(boolean ableToBeConstructedAnywhere) {
+        this.ableToBeConstructedAnywhere = ableToBeConstructedAnywhere;
         generateOrientations();
     }
 
@@ -35,5 +37,10 @@ public class GreyBuilding extends Building {
     @Override
     Piece getPiece() {
         return Piece.GREY_BUILDING;
+    }
+
+    @Override
+    public boolean isAbleToBeConstructedAnywhere() {
+        return ableToBeConstructedAnywhere;
     }
 }

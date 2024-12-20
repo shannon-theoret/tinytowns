@@ -27,9 +27,7 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 10;
-
-        assert(building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -44,9 +42,7 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 8;
-
-        assert(building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -60,9 +56,7 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 15;
-
-        assert(building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -77,9 +71,7 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 11;
-
-        assert(building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -94,9 +86,7 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 5;
-
-        assert(building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -111,9 +101,7 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 9;
-
-        assert(building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -128,9 +116,7 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 10;
-
-        assert(building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -145,9 +131,7 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 10;
-
-        assert(building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -162,9 +146,7 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 15;
-
-        assert(building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -179,9 +161,7 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 13;
-
-        assert(building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -196,9 +176,7 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 8;
-
-        assert(building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -213,9 +191,7 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 9;
-
-        assert(building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -230,9 +206,7 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 6;
-
-        assert(building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -247,9 +221,7 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 14;
-
-        assert(building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -262,9 +234,7 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 6;
-
-        assert(building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -277,9 +247,7 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 11;
-
-        assert(building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -292,9 +260,7 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 10;
-
-        assert(building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -307,9 +273,255 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 6;
+        assert(building.isValidBuild(indexes, portionOfGrid));
+    }
 
-        assert(building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+    @Test
+    public void isValidBuild_cottage_isValid() {
+        Building building = buildingMap.getBuildingMap().get(BuildingName.COTTAGE);
+
+        Map<Integer, Piece> portionOfGrid = new HashMap<>();
+        portionOfGrid.put(10, Piece.GLASS);
+        portionOfGrid.put(11, Piece.BRICK);
+        portionOfGrid.put(14, Piece.WHEAT);
+
+        Set<Integer> indexes = portionOfGrid.keySet();
+
+        assert(building.isValidBuild(indexes, portionOfGrid));
+    }
+
+    @Test
+    public void isValidBuild_cottage2_isValid() {
+        Building building = buildingMap.getBuildingMap().get(BuildingName.COTTAGE);
+
+        Map<Integer, Piece> portionOfGrid = new HashMap<>();
+        portionOfGrid.put(2, Piece.WHEAT);
+        portionOfGrid.put(5, Piece.BRICK);
+        portionOfGrid.put(6, Piece.GLASS);
+
+        Set<Integer> indexes = portionOfGrid.keySet();
+
+        assert(building.isValidBuild(indexes, portionOfGrid));
+    }
+
+    @Test
+    public void isValidBuild_cottage3_isValid() {
+        Building building = buildingMap.getBuildingMap().get(BuildingName.COTTAGE);
+
+        Map<Integer, Piece> portionOfGrid = new HashMap<>();
+        portionOfGrid.put(1, Piece.BRICK);
+        portionOfGrid.put(4, Piece.WHEAT);
+        portionOfGrid.put(5, Piece.GLASS);
+
+        Set<Integer> indexes = portionOfGrid.keySet();
+
+        assert(building.isValidBuild(indexes, portionOfGrid));
+    }
+
+    @Test
+    public void isValidBuild_cottage4_isValid() {
+        Building building = buildingMap.getBuildingMap().get(BuildingName.COTTAGE);
+
+        Map<Integer, Piece> portionOfGrid = new HashMap<>();
+        portionOfGrid.put(9, Piece.BRICK);
+        portionOfGrid.put(10, Piece.GLASS);
+        portionOfGrid.put(14, Piece.WHEAT);
+
+        Set<Integer> indexes = portionOfGrid.keySet();
+
+        assert(building.isValidBuild(indexes, portionOfGrid));
+    }
+
+    @Test
+    public void isValidBuild_redOrchard_isValid() {
+        Building building = buildingMap.getBuildingMap().get(BuildingName.ORCHARD);
+
+        Map<Integer, Piece> portionOfGrid = new HashMap<>();
+        portionOfGrid.put(10, Piece.STONE);
+        portionOfGrid.put(11, Piece.WHEAT);
+        portionOfGrid.put(14, Piece.WHEAT);
+        portionOfGrid.put(15, Piece.WOOD);
+
+        Set<Integer> indexes = portionOfGrid.keySet();
+
+        assert(building.isValidBuild(indexes, portionOfGrid));
+    }
+
+    @Test
+    public void isValidBuild_redOrchardMirror_isValid() {
+        Building building = buildingMap.getBuildingMap().get(BuildingName.ORCHARD);
+
+        Map<Integer, Piece> portionOfGrid = new HashMap<>();
+        portionOfGrid.put(5, Piece.WHEAT);
+        portionOfGrid.put(6, Piece.STONE);
+        portionOfGrid.put(9, Piece.WOOD);
+        portionOfGrid.put(10, Piece.WHEAT);
+
+        Set<Integer> indexes = portionOfGrid.keySet();
+
+        assert(building.isValidBuild(indexes, portionOfGrid));
+    }
+
+    @Test
+    public void isValidBuild_redGranary180Mirror_isValid() {
+        Building building = buildingMap.getBuildingMap().get(BuildingName.GRANARY);
+
+        Map<Integer, Piece> portionOfGrid = new HashMap<>();
+        portionOfGrid.put(9, Piece.BRICK);
+        portionOfGrid.put(10, Piece.WOOD);
+        portionOfGrid.put(13, Piece.WHEAT);
+        portionOfGrid.put(14, Piece.WHEAT);
+
+        Set<Integer> indexes = portionOfGrid.keySet();
+
+        assert(building.isValidBuild(indexes, portionOfGrid));
+    }
+
+    @Test
+    public void isValidBuild_redGranary180_isValid() {
+        Building building = buildingMap.getBuildingMap().get(BuildingName.GRANARY);
+
+        Map<Integer, Piece> portionOfGrid = new HashMap<>();
+        portionOfGrid.put(9, Piece.WOOD);
+        portionOfGrid.put(10, Piece.BRICK);
+        portionOfGrid.put(13, Piece.WHEAT);
+        portionOfGrid.put(14, Piece.WHEAT);
+
+        Set<Integer> indexes = portionOfGrid.keySet();
+
+        assert(building.isValidBuild(indexes, portionOfGrid));
+    }
+
+    @Test
+    public void isValidBuild_redFarm90_isValid() {
+        Building building = buildingMap.getBuildingMap().get(BuildingName.FARM);
+
+        Map<Integer, Piece> portionOfGrid = new HashMap<>();
+        portionOfGrid.put(6, Piece.WOOD);
+        portionOfGrid.put(7, Piece.WHEAT);
+        portionOfGrid.put(10, Piece.WOOD);
+        portionOfGrid.put(11, Piece.WHEAT);
+
+        Set<Integer> indexes = portionOfGrid.keySet();
+
+        assert(building.isValidBuild(indexes, portionOfGrid));
+    }
+
+    @Test
+    public void isValidBuild_redGreenhouse270_isValid() {
+        Building building = buildingMap.getBuildingMap().get(BuildingName.GREENHOUSE);
+
+        Map<Integer, Piece> portionOfGrid = new HashMap<>();
+        portionOfGrid.put(0, Piece.GLASS);
+        portionOfGrid.put(1, Piece.WOOD);
+        portionOfGrid.put(4, Piece.WHEAT);
+        portionOfGrid.put(5, Piece.WOOD);
+
+        Set<Integer> indexes = portionOfGrid.keySet();
+
+        assert(building.isValidBuild(indexes, portionOfGrid));
+    }
+
+    @Test
+    public void isValidBuild_redGreenhouse270Mirror_isValid() {
+        Building building = buildingMap.getBuildingMap().get(BuildingName.GREENHOUSE);
+
+        Map<Integer, Piece> portionOfGrid = new HashMap<>();
+        portionOfGrid.put(0, Piece.WHEAT);
+        portionOfGrid.put(1, Piece.WOOD);
+        portionOfGrid.put(4, Piece.GLASS);
+        portionOfGrid.put(5, Piece.WOOD);
+
+        Set<Integer> indexes = portionOfGrid.keySet();
+
+        assert(building.isValidBuild(indexes, portionOfGrid));
+    }
+
+    @Test
+    public void isValidBuild_redGreenhouse90_isValid() {
+        Building building = buildingMap.getBuildingMap().get(BuildingName.GREENHOUSE);
+
+        Map<Integer, Piece> portionOfGrid = new HashMap<>();
+        portionOfGrid.put(6, Piece.WOOD);
+        portionOfGrid.put(7, Piece.WHEAT);
+        portionOfGrid.put(10, Piece.WOOD);
+        portionOfGrid.put(11, Piece.GLASS);
+
+        Set<Integer> indexes = portionOfGrid.keySet();
+
+        assert(building.isValidBuild(indexes, portionOfGrid));
+    }
+
+    @Test
+    public void isValidBuild_redGreenhouse90Mirror_isValid() {
+        Building building = buildingMap.getBuildingMap().get(BuildingName.GREENHOUSE);
+
+        Map<Integer, Piece> portionOfGrid = new HashMap<>();
+        portionOfGrid.put(6, Piece.WOOD);
+        portionOfGrid.put(7, Piece.GLASS);
+        portionOfGrid.put(10, Piece.WOOD);
+        portionOfGrid.put(11, Piece.WHEAT);
+
+        Set<Integer> indexes = portionOfGrid.keySet();
+
+        assert(building.isValidBuild(indexes, portionOfGrid));
+    }
+
+    @Test
+    public void isValidBuild_greenFeastHall_isValid() {
+            Building building = buildingMap.getBuildingMap().get(BuildingName.FEAST_HALL);
+
+            Map<Integer, Piece> portionOfGrid = new HashMap<>();
+            portionOfGrid.put(13, Piece.WOOD);
+            portionOfGrid.put(14, Piece.WOOD);
+            portionOfGrid.put(15, Piece.GLASS);
+
+            Set<Integer> indexes = portionOfGrid.keySet();
+
+            assert(building.isValidBuild(indexes, portionOfGrid));
+    }
+
+    @Test
+    public void isValidBuild_greenAlmshouse_isValid() {
+        Building building = buildingMap.getBuildingMap().get(BuildingName.ALMSHOUSE);
+
+        Map<Integer, Piece> portionOfGrid = new HashMap<>();
+        portionOfGrid.put(6, Piece.GLASS);
+        portionOfGrid.put(10, Piece.STONE);
+        portionOfGrid.put(14, Piece.STONE);
+
+        Set<Integer> indexes = portionOfGrid.keySet();
+
+        assert(building.isValidBuild(indexes, portionOfGrid));
+    }
+
+    @Test
+    public void isValidBuild_greenTavern_isValid() {
+        Building building = buildingMap.getBuildingMap().get(BuildingName.TAVERN);
+
+        Map<Integer, Piece> portionOfGrid = new HashMap<>();
+        portionOfGrid.put(12, Piece.GLASS);
+        portionOfGrid.put(13, Piece.BRICK);
+        portionOfGrid.put(14, Piece.BRICK);
+
+        Set<Integer> indexes = portionOfGrid.keySet();
+
+        assert(building.isValidBuild(indexes, portionOfGrid));
+
+    }
+
+    @Test
+    public void isValidBuild_greenInn_isValid() {
+        Building building = buildingMap.getBuildingMap().get(BuildingName.INN);
+
+        Map<Integer, Piece> portionOfGrid = new HashMap<>();
+        portionOfGrid.put(4, Piece.WHEAT);
+        portionOfGrid.put(8, Piece.STONE);
+        portionOfGrid.put(12, Piece.GLASS);
+
+        Set<Integer> indexes = portionOfGrid.keySet();
+
+        assert(building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -325,9 +537,7 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 9;
-
-        assert(!building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(!building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -342,9 +552,7 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 2;
-
-        assert(!building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(!building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -359,26 +567,7 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 2;
-
-        assert(!building.isValidBuild(indexes, indexToPlace, portionOfGrid));
-    }
-
-    @Test
-    public void isValidBuild_yellowBakeryIndexNotInSet_isInvalid() {
-        Building building = buildingMap.getBuildingMap().get(BuildingName.BAKERY);
-
-        Map<Integer, Piece> portionOfGrid = new HashMap<>();
-        portionOfGrid.put(2, Piece.STONE);
-        portionOfGrid.put(6, Piece.GLASS);
-        portionOfGrid.put(7, Piece.WOOD);
-        portionOfGrid.put(10, Piece.WOOD);
-
-        Set<Integer> indexes = portionOfGrid.keySet();
-
-        Integer indexToPlace = 1;
-
-        assert(!building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(!building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -393,9 +582,7 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 5;
-
-        assert(!building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(!building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -410,9 +597,7 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 5;
-
-        assert(!building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(!building.isValidBuild(indexes, portionOfGrid));
     }
 
     @Test
@@ -425,9 +610,50 @@ public class BuildingTest {
 
         Set<Integer> indexes = portionOfGrid.keySet();
 
-        Integer indexToPlace = 6;
-
-        assert(!building.isValidBuild(indexes, indexToPlace, portionOfGrid));
+        assert(!building.isValidBuild(indexes, portionOfGrid));
     }
 
+    @Test
+    public void isValidBuild_buildingInWay_isInvalid() {
+        Building building = buildingMap.getBuildingMap().get(BuildingName.COTTAGE);
+
+        Map<Integer, Piece> portionOfGrid = new HashMap<>();
+        portionOfGrid.put(9, Piece.BRICK);
+        portionOfGrid.put(10, Piece.BLUE_BUILDING);
+        portionOfGrid.put(14, Piece.WHEAT);
+
+        Set<Integer> indexes = portionOfGrid.keySet();
+
+        assert(!building.isValidBuild(indexes, portionOfGrid));
+    }
+
+    @Test
+    public void isValidBuild_redJumbled_isInvalid() {
+        Building building = buildingMap.getBuildingMap().get(BuildingName.GRANARY);
+
+        Map<Integer, Piece> portionOfGrid = new HashMap<>();
+        portionOfGrid.put(9, Piece.BRICK);
+        portionOfGrid.put(10, Piece.WHEAT);
+        portionOfGrid.put(13, Piece.WHEAT);
+        portionOfGrid.put(14, Piece.WOOD);
+
+        Set<Integer> indexes = portionOfGrid.keySet();
+
+        assert(!building.isValidBuild(indexes, portionOfGrid));
+    }
+
+    @Test
+    public void isValidBuild_yellowTheatreOneGridSpaceEmpty_isInvalid() {
+        Building building = buildingMap.getBuildingMap().get(BuildingName.THEATER);
+
+        Map<Integer, Piece> portionOfGrid = new HashMap<>();
+        portionOfGrid.put(6, Piece.STONE);
+        portionOfGrid.put(9, Piece.WOOD);
+        portionOfGrid.put(11, Piece.WOOD);
+
+        Set<Integer> indexes = new HashSet<>(portionOfGrid.keySet());
+        indexes.add(10);
+
+        assert(!building.isValidBuild(indexes, portionOfGrid));
+    }
 }

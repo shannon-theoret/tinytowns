@@ -17,6 +17,9 @@ public enum Piece {
     BLACK_BUILDING
     ;
 
+    public boolean isBuilding() {
+        return getBuilding().contains(this);
+    }
     public static EnumSet<Piece> getColouredBlocks() {
         return EnumSet.range(WOOD, GLASS);
     }

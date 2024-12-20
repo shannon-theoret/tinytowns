@@ -2,12 +2,13 @@ package com.shannontheoret.tinytowns.controller;
 
 import com.shannontheoret.tinytowns.*;
 import com.shannontheoret.tinytowns.entity.JPAGame;
-import com.shannontheoret.tinytowns.entity.JPAPlayer;
+import com.shannontheoret.tinytowns.exceptions.GameCodeNotFoundException;
+import com.shannontheoret.tinytowns.exceptions.InternalGameException;
+import com.shannontheoret.tinytowns.exceptions.InvalidMoveException;
 import com.shannontheoret.tinytowns.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.EnumSet;
 import java.util.Set;
 
 @RestController
@@ -56,8 +57,8 @@ public class GameController {
     }
 
     @PostMapping("{gameCode}/endTurn")
-    public JPAGame endTurn(@PathVariable("gameCode") String gameCode, @RequestParam Long playerId) throws InternalGameException, GameCodeNotFoundException, InvalidMoveException {
-        return gameService.endTurn(gameCode, playerId);
+    public JPAGame endTurn(@PathVariable("gameCode") String gameCode) throws InternalGameException, GameCodeNotFoundException, InvalidMoveException {
+        return gameService.endTurn(gameCode);
     }
 
 }

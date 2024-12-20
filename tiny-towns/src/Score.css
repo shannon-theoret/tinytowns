@@ -1,0 +1,15 @@
+.score {
+    border-collapse: collapse;
+    width: 400px;
+    border: 1px;
+    text-align  : center;
+}
+
+.score, .score th, .score td {
+    border: 1px solid black; /* Add border to table, th, and td */
+}
+
+.scoreContainer {
+    display: flex;
+    justify-content: center;
+}

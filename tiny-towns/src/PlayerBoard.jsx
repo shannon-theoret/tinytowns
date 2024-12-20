@@ -27,7 +27,6 @@ export default function PlayerBoard({gameCode, step, setGame, player, buildings,
                 setGame(response.data);
                 setIndexToPlace();
             }).catch (error => {
-                console.log("HERE");
                 if (error.response) {
                     const errorCode = error.response.data.errorCode;
                     switch (errorCode) {
@@ -67,7 +66,6 @@ export default function PlayerBoard({gameCode, step, setGame, player, buildings,
             setIndexesToBuild([]);
             setBuildingSelected();
         }).catch (error => {
-            console.log("HERE");
             if (error.response) {
                 const errorCode = error.response.data.errorCode;
                 switch (errorCode) {
@@ -87,16 +85,6 @@ export default function PlayerBoard({gameCode, step, setGame, player, buildings,
         });        
     }
 
-    const endTurn = () => {
-        axios.post(`/api/${gameCode}/endTurn`, null, {
-            params: {
-                playerId: player.id
-            }
-        }).then((response) => {
-            setGame(response.data);
-        });
-    }
-
     return <div className="player">
         <p>{playerP}</p>
         <Grid
@@ -111,16 +99,14 @@ export default function PlayerBoard({gameCode, step, setGame, player, buildings,
             setIndexesToBuild={setIndexesToBuild} 
         ></Grid>
         {
-            step === "TO_PLACE" && <Button disabled={indexToPlace==null || !player.turnToPlace} onClick={placePiece}>Place Resource</Button>
+            step === "TO_PLACE" && !player.completedGrid &&  player.turnToPlace && <Button disabled={indexToPlace==null} onClick={placePiece}>Place Resource</Button>
         }
         {
-            step === "TO_BUILD" && 
+            step === "TO_BUILD" && !player.completedGrid &&
             <>
                 <Dropdown options={buildingOptions} onChange={handleBuildingSelection} initialValue={buildingSelected}></Dropdown>
                 <br></br>
                 <Button disabled={!buildingSelected || !player.turnToBuild || indexesToBuild.length === 0} onClick={buildPiece}>Build Building</Button>
-                <br></br>
-                <Button disabled={!player.turnToBuild} onClick={endTurn}>End Turn</Button>
             </>
         }
         

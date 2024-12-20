@@ -2,9 +2,10 @@ package com.shannontheoret.tinytowns.service;
 
 import com.shannontheoret.tinytowns.*;
 import com.shannontheoret.tinytowns.entity.JPAGame;
-import com.shannontheoret.tinytowns.entity.JPAPlayer;
+import com.shannontheoret.tinytowns.exceptions.GameCodeNotFoundException;
+import com.shannontheoret.tinytowns.exceptions.InternalGameException;
+import com.shannontheoret.tinytowns.exceptions.InvalidMoveException;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 
@@ -27,5 +28,5 @@ public interface GameService {
 
     JPAGame build(String gameCode, Long playerId, Integer gridIndex, Set<Integer> indexes, BuildingName building) throws InvalidMoveException, GameCodeNotFoundException, InternalGameException;
 
-    JPAGame endTurn(String gameCode, Long playerId) throws GameCodeNotFoundException, InvalidMoveException, InternalGameException;
+    JPAGame endTurn(String gameCode) throws GameCodeNotFoundException, InvalidMoveException, InternalGameException;
 }

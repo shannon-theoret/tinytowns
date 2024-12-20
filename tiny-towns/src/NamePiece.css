@@ -4,9 +4,3 @@
     text-align  : center;
     padding     : 10px;
   }
-
-  .nameResource {
-    display         : flex;
-    justify-content : center;
-    width: 200px;
-  }

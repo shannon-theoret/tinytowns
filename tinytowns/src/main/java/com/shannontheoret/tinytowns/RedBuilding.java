@@ -72,7 +72,7 @@ public class RedBuilding extends Building {
         cubes270.put(new RelativePosition(0,1), resourceA);
         cubes270.put(new RelativePosition(0,0), resourceB);
         cubes270.put(new RelativePosition(1,1), resourceC);
-        cubes270.put(new RelativePosition(0,1), resourceD);
+        cubes270.put(new RelativePosition(1,0), resourceD);
         cubeOrientations.add(cubes270);
     }
 

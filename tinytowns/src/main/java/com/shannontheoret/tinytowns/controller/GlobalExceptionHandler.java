@@ -1,8 +1,8 @@
 package com.shannontheoret.tinytowns.controller;
 
-import com.shannontheoret.tinytowns.GameCodeNotFoundException;
-import com.shannontheoret.tinytowns.InternalGameException;
-import com.shannontheoret.tinytowns.InvalidMoveException;
+import com.shannontheoret.tinytowns.exceptions.GameCodeNotFoundException;
+import com.shannontheoret.tinytowns.exceptions.InternalGameException;
+import com.shannontheoret.tinytowns.exceptions.InvalidMoveException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
