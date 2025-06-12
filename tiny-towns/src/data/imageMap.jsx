@@ -17,11 +17,11 @@ export const imgMap = {
     "STONE": <img src={stone} alt="stone" />,
     "BRICK": <img src={brick} alt="brick" />,
     "GLASS": <img src={glass} alt="glass" />,
-    "BLUE_BUILDING": <img src={blue} alt="blue" />,
-    "RED_BUILDING": <img src={red} alt="red" />,
-    "GREY_BUILDING": <img src={grey} alt="grey" />,
-    "ORANGE_BUILDING": <img src={orange} alt="orange" />,
-    "GREEN_BUILDING": <img src={green} alt="green" />,
-    "YELLOW_BUILDING": <img src={yellow} alt="yellow" />,
-    "BLACK_BUILDING": <img src={black} alt="black" />
+    "BLUE_BUILDING": <img className="building" src={blue} alt="blue" />,
+    "RED_BUILDING": <img className="building" src={red} alt="red" />,
+    "GREY_BUILDING": <img className="building" src={grey} alt="grey" />,
+    "ORANGE_BUILDING": <img className="building" src={orange} alt="orange" />,
+    "GREEN_BUILDING": <img className="building" src={green} alt="green" />,
+    "YELLOW_BUILDING": <img className="building" src={yellow} alt="yellow" />,
+    "BLACK_BUILDING": <img className="building" src={black} alt="black" />
 }

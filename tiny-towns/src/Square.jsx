@@ -1,5 +1,5 @@
 import { imgMap } from './data/imageMap';
-
+import './Square.css';
 export default function Square({index, step, indexToPlace, setIndexToPlace, indexToBuild, setIndexToBuild, indexesToBuild, setIndexesToBuild, squares}) {
 
 

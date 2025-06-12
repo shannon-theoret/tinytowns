@@ -85,11 +85,21 @@ export default function PlayerBoard({gameCode, step, setGame, player, buildings,
         });        
     }
 
+    const exampleSquares = {
+        "2": "BLUE_BUILDING",
+        "4": "RED_BUILDING",
+        "6": "GREY_BUILDING",
+        "7": "ORANGE_BUILDING",
+        "9": "GREEN_BUILDING",
+        "11": "YELLOW_BUILDING"
+    }
+
     return <div className="player">
         <p>{playerP}</p>
         <Grid
             playerId={player.id} 
-            squares={player.squares}
+            //squares={player.squares}
+            squares={exampleSquares}
             step={step} 
             indexToPlace={indexToPlace} 
             setIndexToPlace={setIndexToPlace} 
