@@ -1,0 +1,17 @@
+.moves {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    gap: 20px;
+    align-items: center;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.instructions {
+    width: 900px;
+}
+
+.moves > * {
+    margin: 0;
+}

@@ -1,3 +1,13 @@
 .building {
     width: 40px;
 }
+
+.square {
+    width: 80px;
+    height: 80px;
+    border: 1px solid #e4e4e4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #e4e4e4;
+  }

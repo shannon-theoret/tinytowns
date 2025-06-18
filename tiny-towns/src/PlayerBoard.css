@@ -1,2 +1,33 @@
+.player {
+    padding: 2rem;
+    background: #fffefc;
+    border-radius: 1rem;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    height: 550px;
+    gap: 1.5rem;
+  }
 
+  
+  .build-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 320px;
+    align-items: center;
+  }
+
+  .master-builder {
+    height: 25px;
+    border: 1px black;
+    margin-left: 15px;
+  }
+
+  .building-options {
+    display: block;
+    height: 1500px;
+  }
   

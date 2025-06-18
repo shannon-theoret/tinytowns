@@ -1,24 +1,18 @@
 package com.shannontheoret.tinytowns;
 
 import com.shannontheoret.tinytowns.dao.GameDao;
-import com.shannontheoret.tinytowns.dao.GameDaoImpl;
 import com.shannontheoret.tinytowns.entity.JPAGame;
 import com.shannontheoret.tinytowns.entity.JPAPlayer;
 import com.shannontheoret.tinytowns.exceptions.GameCodeNotFoundException;
 import com.shannontheoret.tinytowns.exceptions.InvalidMoveException;
-import com.shannontheoret.tinytowns.service.GameService;
 import com.shannontheoret.tinytowns.service.GameServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-
 
 import java.util.*;
 
@@ -30,13 +24,20 @@ import static org.mockito.Mockito.*;
 public class GameServiceTest {
 
     @Mock
-    GameDaoImpl gameDao;
+    GameDao gameDao;
 
-    @Mock
     BuildingMap buildingMap;
 
     @InjectMocks
     private GameServiceImpl gameService;
+
+    @BeforeEach
+    void setUp() {
+        buildingMap = new BuildingMap();
+        buildingMap.init();
+        MockitoAnnotations.openMocks(this);
+        gameService = new GameServiceImpl(gameDao, buildingMap);
+    }
 
     @Test
     public void newGameTest() {
@@ -51,7 +52,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void addPlayerTest_firstPlayer() throws GameCodeNotFoundException, InvalidMoveException {
+    public void addPlayerTest_firstPlayer() {
         JPAGame game = new JPAGame();
         game.setStep(GameStep.SETUP);
         game.setPlayers(new ArrayList<>());
@@ -63,12 +64,8 @@ public class GameServiceTest {
         verify(gameDao, times(1)).save(game);
         assertEquals(GameStep.SETUP, game.getStep());
         assertEquals(1, game.getPlayers().size());
-        assertEquals(game.getPlayers().stream().iterator().next().getPlayerOrder(), 0);
-        assertEquals(game.getPlayers().stream().iterator().next().getName(), "Emily");
-        assertEquals(game.getPlayers().stream().iterator().next().isCompletedGrid(), false);
-        assertEquals(game.getPlayers().stream().iterator().next().getTurnToPlace(), false);
-        assertEquals(game.getPlayers().stream().iterator().next().getTurnToPlace(), false);
-        assertEquals(game.getPlayers().stream().iterator().next().getTurnToBuild(), false);
+        assertEquals(0, game.getPlayers().stream().iterator().next().getPlayerOrder());
+        assertEquals("Emily", game.getPlayers().stream().iterator().next().getName());
     }
 
     @Test
@@ -170,7 +167,7 @@ public class GameServiceTest {
     public void namePiece_valid() {
         JPAGame game = createGameWithTwoPlayers();
         JPAPlayer player = game.getPlayers().get(1);
-        player.setCompletedGrid(true);
+        player.setPlayerStep(PlayerStep.GRID_COMPLETE);
 
         doNothing().when(gameDao).save(any(JPAGame.class));
         when(gameDao.findByCode("123")).thenReturn(game);
@@ -178,8 +175,8 @@ public class GameServiceTest {
         assertDoesNotThrow(() -> gameService.namePiece("123", Piece.WOOD));
         assertEquals(Piece.WOOD, game.getResource());
         assertEquals(GameStep.TO_PLACE, game.getStep());
-        assertTrue(game.getPlayers().get(0).getTurnToPlace());
-        assertFalse(game.getPlayers().get(1).getTurnToPlace());
+        assertEquals(PlayerStep.PLACE, game.getPlayers().get(0).getPlayerStep());
+        assertEquals(PlayerStep.GRID_COMPLETE, game.getPlayers().get(1).getPlayerStep());
         verify(gameDao, times(1)).save(game);
     }
 
@@ -209,8 +206,8 @@ public class GameServiceTest {
         JPAGame game = createGameWithTwoPlayers();
         game.setStep(GameStep.TO_PLACE);
         game.setResource(Piece.BRICK);
-        game.getPlayers().get(0).setTurnToPlace(true);
-        game.getPlayers().get(1).setTurnToPlace(true);
+        game.getPlayers().get(0).setPlayerStep(PlayerStep.PLACE);
+        game.getPlayers().get(1).setPlayerStep(PlayerStep.PLACE);
 
         doNothing().when(gameDao).save(any(JPAGame.class));
         when(gameDao.findByCode("123")).thenReturn(game);
@@ -227,7 +224,7 @@ public class GameServiceTest {
         JPAGame game = createGameWithTwoPlayers();
         game.setStep(GameStep.TO_PLACE);
         game.setResource(Piece.BRICK);
-        game.getPlayers().get(0).setTurnToPlace(true);
+        game.getPlayers().get(0).setPlayerStep(PlayerStep.PLACE);
 
         doNothing().when(gameDao).save(any(JPAGame.class));
         when(gameDao.findByCode("123")).thenReturn(game);
@@ -241,7 +238,7 @@ public class GameServiceTest {
     public void placePiece_incorrectStep_throwsInvalidMoveException() {
         JPAGame game = createGameWithTwoPlayers();
         game.setResource(Piece.GLASS);
-        game.getPlayers().get(0).setTurnToPlace(true);
+        game.getPlayers().get(0).setPlayerStep(PlayerStep.PLACE);
 
         when(gameDao.findByCode("123")).thenReturn(game);
 
@@ -265,7 +262,7 @@ public class GameServiceTest {
         JPAGame game = createGameWithTwoPlayers();
         game.setStep(GameStep.TO_PLACE);
         game.setResource(Piece.BRICK);
-        game.getPlayers().get(0).setTurnToPlace(true);
+        game.getPlayers().get(0).setPlayerStep(PlayerStep.PLACE);
 
         assertThrows(InvalidMoveException.class, () -> gameService.placePiece("123", Long.valueOf(1), 18));
         verify(gameDao, times(0)).save(game);
@@ -276,7 +273,7 @@ public class GameServiceTest {
         JPAGame game = createGameWithTwoPlayers();
         game.setStep(GameStep.TO_PLACE);
         game.setResource(Piece.BRICK);
-        game.getPlayers().get(0).setTurnToPlace(true);
+        game.getPlayers().get(0).setPlayerStep(PlayerStep.PLACE);
 
         when(gameDao.findByCode("123")).thenReturn(game);
 
@@ -285,11 +282,11 @@ public class GameServiceTest {
     }
 
     @Test
-    public void build_valid() {
+    public void build_valid() throws GameCodeNotFoundException, InvalidMoveException {
         JPAGame game = createGameWithTwoPlayers();
         game.setStep(GameStep.TO_BUILD);
         JPAPlayer player1 = game.getPlayers().get(0);
-        player1.setTurnToBuild(true);
+        player1.setPlayerStep(PlayerStep.BUILD);
         player1.getSquares().put(0, Piece.WOOD);
         player1.getSquares().put(1, Piece.GREY_BUILDING);
         player1.getSquares().put(5, Piece.BLUE_BUILDING);
@@ -298,13 +295,11 @@ public class GameServiceTest {
         player1.getSquares().put(11, Piece.STONE);
         player1.getSquares().put(14, Piece.WOOD);
 
-        Map<BuildingName, Building> map = createBuildingMap();
-
         when(gameDao.findByCode("123")).thenReturn(game);
-        when(buildingMap.getBuildingMap()).thenReturn(map);
         doNothing().when(gameDao).save(any(JPAGame.class));
 
-        assertDoesNotThrow(() -> gameService.build("123", Long.valueOf(1), 11, Set.of(9,10,11,14), BuildingName.MARKET));
+        gameService.build("123", Long.valueOf(1), 11, Set.of(9,10,11,14), BuildingName.MARKET);
+
         assertFalse(player1.getSquares().containsKey(9));
         assertFalse(player1.getSquares().containsKey(10));
         assertFalse(player1.getSquares().containsKey(14));
@@ -317,7 +312,7 @@ public class GameServiceTest {
         JPAGame game = createGameWithTwoPlayers();
         game.setStep(GameStep.TO_NAME);
         JPAPlayer player1 = game.getPlayers().get(0);
-        player1.setTurnToBuild(true);
+        player1.setPlayerStep(PlayerStep.BUILD);
         player1.getSquares().put(0, Piece.WOOD);
         player1.getSquares().put(1, Piece.GREY_BUILDING);
         player1.getSquares().put(5, Piece.BLUE_BUILDING);
@@ -325,8 +320,6 @@ public class GameServiceTest {
         player1.getSquares().put(10, Piece.GLASS);
         player1.getSquares().put(11, Piece.STONE);
         player1.getSquares().put(14, Piece.WOOD);
-
-        Map<BuildingName, Building> map = createBuildingMap();
 
         when(gameDao.findByCode("123")).thenReturn(game);
 
@@ -339,7 +332,7 @@ public class GameServiceTest {
         JPAGame game = createGameWithTwoPlayers();
         game.setStep(GameStep.TO_BUILD);
         JPAPlayer player1 = game.getPlayers().get(0);
-        player1.setTurnToBuild(true);
+        player1.setPlayerStep(PlayerStep.BUILD);
         player1.getSquares().put(0, Piece.STONE);
         player1.getSquares().put(1, Piece.GLASS);
         player1.getSquares().put(2, Piece.STONE);
@@ -371,9 +364,7 @@ public class GameServiceTest {
         player1.setSquares(new TreeMap<>());
         player1.setPlayerOrder(0);
         player1.setMasterBuilder(true);
-        player1.setTurnToPlace(false);
-        player1.setCompletedGrid(false);
-        player1.setTurnToBuild(false);
+        player1.setPlayerStep(PlayerStep.SELECT);
 
         JPAPlayer player2 = new JPAPlayer();
         player2.setId(Long.valueOf(2));
@@ -382,9 +373,7 @@ public class GameServiceTest {
         player2.setSquares(new TreeMap<>());
         player2.setPlayerOrder(1);
         player2.setMasterBuilder(false);
-        player2.setTurnToPlace(false);
-        player2.setCompletedGrid(false);
-        player2.setTurnToBuild(false);
+        player2.setPlayerStep(PlayerStep.WAIT);
 
         List<JPAPlayer> players = new ArrayList<>();
         players.add(player1);

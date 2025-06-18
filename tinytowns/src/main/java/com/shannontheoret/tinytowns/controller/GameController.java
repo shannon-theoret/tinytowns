@@ -36,7 +36,7 @@ public class GameController {
         return gameService.addPlayer(gameCode, playerName);
     }
 
-    @RequestMapping("{gameCode}/startGame")
+    @PostMapping("{gameCode}/startGame")
     public JPAGame startGame(@PathVariable("gameCode") String gameCode) throws InvalidMoveException, GameCodeNotFoundException {
         return gameService.startGame(gameCode);
     }

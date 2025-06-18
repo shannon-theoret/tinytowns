@@ -12,11 +12,11 @@ import yellow from '../img/yellow.png';
 import black from '../img/black.png';
 
 export const imgMap = {
-    "WOOD": <img src={wood} alt="wood" />,
-    "WHEAT": <img src={wheat} alt="wheat" />,
-    "STONE": <img src={stone} alt="stone" />,
-    "BRICK": <img src={brick} alt="brick" />,
-    "GLASS": <img src={glass} alt="glass" />,
+    "WOOD": <img className="resource" src={wood} alt="wood" />,
+    "WHEAT": <img className="resource" src={wheat} alt="wheat" />,
+    "STONE": <img className="resource" src={stone} alt="stone" />,
+    "BRICK": <img className="resource" src={brick} alt="brick" />,
+    "GLASS": <img className="resource" src={glass} alt="glass" />,
     "BLUE_BUILDING": <img className="building" src={blue} alt="blue" />,
     "RED_BUILDING": <img className="building" src={red} alt="red" />,
     "GREY_BUILDING": <img className="building" src={grey} alt="grey" />,

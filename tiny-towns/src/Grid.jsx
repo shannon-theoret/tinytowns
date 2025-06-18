@@ -1,10 +1,10 @@
 import './Grid.css';
 import Square from './Square';
-
+import gridBackground from './img/board.png';
 export default function Grid({playerId, squares, step, indexToPlace, setIndexToPlace, indexToBuild, setIndexToBuild, indexesToBuild, setIndexesToBuild}) {
 
-    return <div className="grid">
-        <div className="column">
+    return <div className="grid" style={{backgroundImage: `url(${gridBackground})`}}>
+        <div className="grid-column">
             <Square 
                 index={0} 
                 step={step} 
@@ -50,7 +50,7 @@ export default function Grid({playerId, squares, step, indexToPlace, setIndexToP
                 squares={squares}
             ></Square>
         </div>
-        <div className="column">
+        <div className="grid-column">
         <Square 
                 index={1} 
                 step={step} 
@@ -96,7 +96,7 @@ export default function Grid({playerId, squares, step, indexToPlace, setIndexToP
                 squares={squares}
             ></Square>
         </div>
-        <div className="column">
+        <div className="grid-column">
             <Square 
                 index={2}
                 step={step} 
@@ -141,8 +141,7 @@ export default function Grid({playerId, squares, step, indexToPlace, setIndexToP
                 squares={squares}
             ></Square>    
         </div>
-        <div className="column">
-        <div className="column">
+        <div className="grid-column">
             <Square 
                 index={3}
                 step={step} 
@@ -186,6 +185,6 @@ export default function Grid({playerId, squares, step, indexToPlace, setIndexToP
                 setIndexesToBuild={setIndexesToBuild}
                 squares={squares}
             ></Square>    
-        </div>        </div>
+        </div>
     </div>;
 }

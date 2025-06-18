@@ -1,29 +1,26 @@
-import axios from "axios";
 import { useState } from "react";
 import Button from "./Button";
+import './AddPlayer.css';
 
-export default function AddPlayer(props) {
+export default function AddPlayer({handleAddPlayer}) {
 
     const [playerName, setPlayerName] = useState("");
-
     const addPlayer = () => {
-        if ( playerName.length > 0) {
-            axios.post(`/api/${props.gameCode}/addPlayer`, null, {params: {playerName: playerName}}).then((response) => {
-                props.setGame(response.data);
-                setPlayerName("");
-            });   
-        }
+      if (!playerName.trim()) return;
+      handleAddPlayer(playerName);
+      setPlayerName("");
     }
 
-    return <div>
-      <label>Enter your name:
+
+    return (
+      <div className="add-player">
         <input
-          type="text" 
+          type="text"
+          placeholder="Enter your name"
           value={playerName}
           onChange={(e) => setPlayerName(e.target.value)}
         />
-      </label>
-        <Button onClick={addPlayer}>Add Player</Button>
-    </div>;
-
+        <Button onClick={addPlayer}>Join</Button>
+      </div>
+    );
 }

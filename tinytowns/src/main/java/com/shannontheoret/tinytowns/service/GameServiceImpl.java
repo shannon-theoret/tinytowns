@@ -91,6 +91,12 @@ public class GameServiceImpl implements GameService {
         if (Rules.MIN_PLAYERS <= game.getPlayers().size()) {
             JPAPlayer first = game.getPlayers().get(0);
             first.setMasterBuilder(true);
+            first.setPlayerStep(PlayerStep.SELECT);
+            for (JPAPlayer player : game.getPlayers()) {
+                if (!player.getMasterBuilder()) {
+                    player.setPlayerStep(PlayerStep.WAIT);
+                }
+            }
             game.setStep(GameStep.TO_NAME);
             game.setCards(generateCardMap());
             save(game);
@@ -113,8 +119,8 @@ public class GameServiceImpl implements GameService {
         game.setResource(piece);
         game.setStep(GameStep.TO_PLACE);
         for (JPAPlayer player : game.getPlayers()) {
-            if (!player.isCompletedGrid()) {
-                player.setTurnToPlace(true);
+            if (player.getPlayerStep() != PlayerStep.GRID_COMPLETE) {
+                player.setPlayerStep(PlayerStep.PLACE);
             }
         }
         save(game);
@@ -134,17 +140,16 @@ public class GameServiceImpl implements GameService {
         }
         JPAPlayer player = getPlayerById(game, playerId);
 
-        if (!player.getTurnToPlace()) {
+        if (player.getPlayerStep() != PlayerStep.PLACE) {
             throw new InvalidMoveException("Player has already placed piece.");
         }
         if (player.getSquares().containsKey(gridIndex)) {
             throw new InvalidMoveException("Piece already occupies square.");
         }
         player.getSquares().put(gridIndex, game.getResource());
-        player.setTurnToPlace(false);
-        if (!game.getPlayers().stream().anyMatch(gamePlayer -> gamePlayer.getTurnToPlace())) {
+        player.setPlayerStep(PlayerStep.BUILD);
+        if (!game.getPlayers().stream().anyMatch(gamePlayer -> (gamePlayer.getPlayerStep() == PlayerStep.PLACE))) {
             game.setStep(GameStep.TO_BUILD);
-            game.getPlayers().forEach(gamePlayer -> gamePlayer.setTurnToBuild(!gamePlayer.isCompletedGrid()));
         }
         save(game);
         return game;
@@ -154,13 +159,16 @@ public class GameServiceImpl implements GameService {
     @Transactional
     public JPAGame build(String gameCode, Long playerId, Integer gridIndex, Set<Integer> indexes, BuildingName buildingName) throws InvalidMoveException, GameCodeNotFoundException {
         JPAGame game = findByCode(gameCode);
-        if (game.getStep() != GameStep.TO_BUILD) {
+        if (game.getStep() != GameStep.TO_BUILD && game.getStep() != GameStep.TO_PLACE) {
             throw new InvalidMoveException("Cannot place piece. Incorrect step of game play.");
         }
         if (game.getCards().get(buildingName.getColor()) != buildingName) {
             throw new InvalidMoveException("Cannot build " + buildingName + " as it is not one of the starting cards.");
         }
         JPAPlayer player = getPlayerById(game, playerId);
+        if (player.getPlayerStep() != PlayerStep.BUILD && game.getStep() == GameStep.TO_PLACE) {
+            throw new InvalidMoveException("Player must place the named resource cube before building.");
+        }
         Map<Integer, Piece> portionOfGrid = player.getPortionOfGrid(indexes);
         Building building = buildingMap.getBuildingMap().get(buildingName);
         if (!indexes.contains(gridIndex) && (!building.isAbleToBeConstructedAnywhere() || player.getSquares().containsKey(gridIndex))) {
@@ -182,16 +190,19 @@ public class GameServiceImpl implements GameService {
     @Transactional
     public JPAGame endTurn(String gameCode) throws GameCodeNotFoundException, InvalidMoveException, InternalGameException {
         JPAGame game = findByCode(gameCode);
+        if (game.getStep() != GameStep.TO_BUILD) {
+            throw new InvalidMoveException("All players must place the resource before master builder can end turn.");
+        }
         for (JPAPlayer player: game.getPlayers()) {
-            player.setTurnToBuild(false);
+            player.setPlayerStep(PlayerStep.WAIT);
         }
         game.getPlayers().stream().forEach(player -> {
             if (player.getSquares().size() == 16) {
-                player.setCompletedGrid(true);
+                player.setPlayerStep(PlayerStep.GRID_COMPLETE);
             }
         });
 
-        if (game.getPlayers().stream().allMatch(gamePlayer -> gamePlayer.isCompletedGrid())) {
+        if (game.getPlayers().stream().allMatch(gamePlayer -> gamePlayer.getPlayerStep() == PlayerStep.GRID_COMPLETE)) {
             game.setStep(GameStep.END_GAME);
             calculateScores(game);
         } else {
@@ -208,8 +219,9 @@ public class GameServiceImpl implements GameService {
                 } else {
                     currentMasterBuilder = game.getPlayers().get(currentMasterBuilder.getPlayerOrder() + 1);
                 }
-            } while (currentMasterBuilder.isCompletedGrid());
+            } while (currentMasterBuilder.getPlayerStep() == PlayerStep.GRID_COMPLETE);
             currentMasterBuilder.setMasterBuilder(true);
+            currentMasterBuilder.setPlayerStep(PlayerStep.SELECT);
             game.setStep(GameStep.TO_NAME);
         }
         save(game);

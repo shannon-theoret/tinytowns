@@ -4,3 +4,8 @@
     text-align  : center;
     padding     : 10px;
   }
+
+  .nameResource {
+    margin-bottom: 15px;
+    margin-top: 15px;
+  }

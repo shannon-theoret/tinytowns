@@ -1,22 +1,11 @@
 import React, { useState } from "react";
-import axios from "axios";
 import Button from "./Button";
 import './NamePiece.css';
 import SingleNamePiece from "./SingleNamePiece";
 
-export default function NamePiece(props) {
+export default function NamePiece({handleNamePiece}) {
 
     const [resource, setResource] = useState("");
-
-    const namePiece = () => {
-        axios.post(`/api/${props.gameCode}/namePiece`, null, {
-            params: {
-                piece: resource
-            }
-        }).then((response) => {
-            props.setGame(response.data);
-        });       
-    }
 
     return <>
         <div className="nameResource">
@@ -26,6 +15,6 @@ export default function NamePiece(props) {
         <SingleNamePiece selectedResource={resource} resource="BRICK" setResource={setResource}/>
         <SingleNamePiece selectedResource={resource} resource="GLASS" setResource={setResource}/>    
         </div>
-        <Button disabled={!resource} onClick={namePiece}>Name Resource</Button>
+        <Button disabled={!resource} onClick={() => handleNamePiece(resource)}>Name Resource</Button>
         </>;
 }

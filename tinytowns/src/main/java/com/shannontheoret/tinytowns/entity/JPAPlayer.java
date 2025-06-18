@@ -2,6 +2,7 @@ package com.shannontheoret.tinytowns.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.shannontheoret.tinytowns.Piece;
+import com.shannontheoret.tinytowns.PlayerStep;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -52,11 +53,9 @@ public class JPAPlayer {
     @Column(name="turnToPlace")
     private boolean turnToPlace;
 
-    @Column(name="completedGrid")
-    private boolean completedGrid;
-
-    @Column(name="turnToBuild")
-    private boolean turnToBuild;
+    @Column(name="player_step")
+    @Enumerated(EnumType.STRING)
+    private PlayerStep playerStep;
 
     public Long getId() {
         return id;
@@ -130,20 +129,12 @@ public class JPAPlayer {
         this.turnToPlace = turnToPlace;
     }
 
-    public boolean isCompletedGrid() {
-        return completedGrid;
+    public PlayerStep getPlayerStep() {
+        return playerStep;
     }
 
-    public void setCompletedGrid(boolean completedGrid) {
-        this.completedGrid = completedGrid;
-    }
-
-    public boolean getTurnToBuild() {
-        return turnToBuild;
-    }
-
-    public void setTurnToBuild(boolean turnToBuild) {
-        this.turnToBuild = turnToBuild;
+    public void setPlayerStep(PlayerStep playerStep) {
+        this.playerStep = playerStep;
     }
 
     public Map<Integer, Piece> getPortionOfGrid(Set<Integer> indexes) {
