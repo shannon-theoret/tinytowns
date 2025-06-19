@@ -2,6 +2,7 @@ package com.shannontheoret.tinytowns.service;
 
 import com.shannontheoret.tinytowns.*;
 import com.shannontheoret.tinytowns.dao.GameDao;
+import com.shannontheoret.tinytowns.dto.GameDto;
 import com.shannontheoret.tinytowns.entity.JPAGame;
 import com.shannontheoret.tinytowns.entity.JPAPlayer;
 import com.shannontheoret.tinytowns.exceptions.GameCodeNotFoundException;
@@ -14,17 +15,18 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
-
 @Service
 public class GameServiceImpl implements GameService {
 
     private GameDao gameDao;
     private BuildingMap buildingMap;
+    private GameMapper gameMapper;
 
     @Autowired
-    public GameServiceImpl(GameDao gameDao, BuildingMap buildingMap) {
+    public GameServiceImpl(GameDao gameDao, BuildingMap buildingMap, GameMapper gameMapper) {
         this.gameDao = gameDao;
         this.buildingMap = buildingMap;
+        this.gameMapper = gameMapper;
     }
 
     private static final Random RANDOM = new Random();
@@ -37,12 +39,12 @@ public class GameServiceImpl implements GameService {
 
     @Override
     @Transactional
-    public JPAGame findByCode(String code)  throws GameCodeNotFoundException {
+    public GameDto findByCode(String code) throws GameCodeNotFoundException {
         JPAGame game = gameDao.findByCode(code);
-        if (game==null) {
+        if (game == null) {
             throw new GameCodeNotFoundException(code);
         }
-        return game;
+        return gameMapper.toDto(game);
     }
 
     @Override
@@ -53,18 +55,18 @@ public class GameServiceImpl implements GameService {
 
     @Override
     @Transactional
-    public JPAGame newGame() {
+    public GameDto newGame() {
         JPAGame game = new JPAGame();
         game.setCode(generateCode());
         game.setStep(GameStep.SETUP);
         save(game);
-        return game;
+        return gameMapper.toDto(game);
     }
 
     @Override
     @Transactional
-    public JPAGame addPlayer(String gameCode, String playerName) throws InvalidMoveException, GameCodeNotFoundException {
-        JPAGame game = findByCode(gameCode);
+    public GameDto addPlayer(String gameCode, String playerName) throws InvalidMoveException, GameCodeNotFoundException {
+        JPAGame game = findGameEntityByCode(gameCode);
         if (game.getStep() != GameStep.SETUP) {
             throw new InvalidMoveException("Game is not in the setup phase.");
         }
@@ -78,13 +80,13 @@ public class GameServiceImpl implements GameService {
         } else {
             throw new InvalidMoveException("Maximum player count of " + Rules.MAX_PLAYERS + " has already been reached.");
         }
-        return game;
+        return gameMapper.toDto(game);
     }
 
     @Override
     @Transactional
-    public JPAGame startGame(String gameCode) throws InvalidMoveException, GameCodeNotFoundException {
-        JPAGame game = findByCode(gameCode);
+    public GameDto startGame(String gameCode) throws InvalidMoveException, GameCodeNotFoundException {
+        JPAGame game = findGameEntityByCode(gameCode);
         if (game.getStep() != GameStep.SETUP) {
             throw new InvalidMoveException("Game is not in the setup phase.");
         }
@@ -103,13 +105,13 @@ public class GameServiceImpl implements GameService {
         } else {
             throw new InvalidMoveException("Require " + (Rules.MIN_PLAYERS - game.getPlayers().size()) + " more players to start game.");
         }
-        return game;
+        return gameMapper.toDto(game);
     }
 
     @Override
     @Transactional
-    public JPAGame namePiece(String gameCode, Piece piece) throws InvalidMoveException, GameCodeNotFoundException {
-        JPAGame game = findByCode(gameCode);
+    public GameDto namePiece(String gameCode, Piece piece) throws InvalidMoveException, GameCodeNotFoundException {
+        JPAGame game = findGameEntityByCode(gameCode);
         if (game.getStep() != GameStep.TO_NAME) {
             throw new InvalidMoveException("Cannot name piece. Incorrect step of game play.");
         }
@@ -124,19 +126,18 @@ public class GameServiceImpl implements GameService {
             }
         }
         save(game);
-        return game;
+        return gameMapper.toDto(game);
     }
 
     @Override
     @Transactional
-    public JPAGame placePiece(String gameCode, Long playerId, Integer gridIndex) throws InvalidMoveException,
-            GameCodeNotFoundException, InternalGameException {
+    public GameDto placePiece(String gameCode, Long playerId, Integer gridIndex) throws InvalidMoveException, GameCodeNotFoundException, InternalGameException {
+        JPAGame game = findGameEntityByCode(gameCode);
         if (!RelativePosition.isValidIndex(gridIndex)) {
             throw new InvalidMoveException("Grid index must be between 0 and 15. " + gridIndex + " provided.");
         }
-        JPAGame game = findByCode(gameCode);
         if (game.getStep() != GameStep.TO_PLACE) {
-            throw new InvalidMoveException(("Cannot place piece. Incorrect step of game play."));
+            throw new InvalidMoveException("Cannot place piece. Incorrect step of game play.");
         }
         JPAPlayer player = getPlayerById(game, playerId);
 
@@ -148,17 +149,17 @@ public class GameServiceImpl implements GameService {
         }
         player.getSquares().put(gridIndex, game.getResource());
         player.setPlayerStep(PlayerStep.BUILD);
-        if (!game.getPlayers().stream().anyMatch(gamePlayer -> (gamePlayer.getPlayerStep() == PlayerStep.PLACE))) {
+        if (game.getPlayers().stream().noneMatch(p -> p.getPlayerStep() == PlayerStep.PLACE)) {
             game.setStep(GameStep.TO_BUILD);
         }
         save(game);
-        return game;
+        return gameMapper.toDto(game);
     }
 
     @Override
     @Transactional
-    public JPAGame build(String gameCode, Long playerId, Integer gridIndex, Set<Integer> indexes, BuildingName buildingName) throws InvalidMoveException, GameCodeNotFoundException {
-        JPAGame game = findByCode(gameCode);
+    public GameDto build(String gameCode, Long playerId, Integer gridIndex, Set<Integer> indexes, BuildingName buildingName) throws InvalidMoveException, GameCodeNotFoundException {
+        JPAGame game = findGameEntityByCode(gameCode);
         if (game.getStep() != GameStep.TO_BUILD && game.getStep() != GameStep.TO_PLACE) {
             throw new InvalidMoveException("Cannot place piece. Incorrect step of game play.");
         }
@@ -183,13 +184,13 @@ public class GameServiceImpl implements GameService {
             throw new InvalidMoveException("Cannot build " + buildingName + " at grid index of " + gridIndex);
         }
         save(game);
-        return game;
+        return gameMapper.toDto(game);
     }
 
     @Override
     @Transactional
-    public JPAGame endTurn(String gameCode) throws GameCodeNotFoundException, InvalidMoveException, InternalGameException {
-        JPAGame game = findByCode(gameCode);
+    public GameDto endTurn(String gameCode) throws GameCodeNotFoundException, InvalidMoveException, InternalGameException {
+        JPAGame game = findGameEntityByCode(gameCode);
         if (game.getStep() != GameStep.TO_BUILD) {
             throw new InvalidMoveException("All players must place the resource before master builder can end turn.");
         }
@@ -225,11 +226,19 @@ public class GameServiceImpl implements GameService {
             game.setStep(GameStep.TO_NAME);
         }
         save(game);
-        return game;
+        return gameMapper.toDto(game);
     }
 
     private static String generateCode() {
         return RandomStringUtils.randomAlphanumeric(8);
+    }
+
+    private JPAGame findGameEntityByCode(String code) throws GameCodeNotFoundException {
+        JPAGame game = gameDao.findByCode(code);
+        if (game == null) {
+            throw new GameCodeNotFoundException(code);
+        }
+        return game;
     }
 
     private static JPAPlayer getPlayerById(JPAGame game, Long playerId) throws InvalidMoveException {

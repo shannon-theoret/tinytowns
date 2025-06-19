@@ -1,6 +1,7 @@
 package com.shannontheoret.tinytowns;
 
 import com.shannontheoret.tinytowns.dao.GameDao;
+import com.shannontheoret.tinytowns.dto.GameDto;
 import com.shannontheoret.tinytowns.entity.JPAGame;
 import com.shannontheoret.tinytowns.entity.JPAPlayer;
 import com.shannontheoret.tinytowns.exceptions.GameCodeNotFoundException;
@@ -28,6 +29,8 @@ public class GameServiceTest {
 
     BuildingMap buildingMap;
 
+    GameMapper gameMapper;
+
     @InjectMocks
     private GameServiceImpl gameService;
 
@@ -35,20 +38,21 @@ public class GameServiceTest {
     void setUp() {
         buildingMap = new BuildingMap();
         buildingMap.init();
+        gameMapper = new GameMapper();
         MockitoAnnotations.openMocks(this);
-        gameService = new GameServiceImpl(gameDao, buildingMap);
+        gameService = new GameServiceImpl(gameDao, buildingMap, gameMapper);
     }
 
     @Test
     public void newGameTest() {
         doNothing().when(gameDao).save(any(JPAGame.class));
 
-        JPAGame game = gameService.newGame();
+        GameDto game = gameService.newGame();
 
         assertNotNull(game);
         assertNotNull(game.getCode());
         assertEquals(GameStep.SETUP, game.getStep());
-        verify(gameDao, times(1)).save(game);
+        verify(gameDao, times(1)).save(any());
     }
 
     @Test
@@ -214,7 +218,6 @@ public class GameServiceTest {
 
         assertDoesNotThrow(() -> gameService.placePiece("123", Long.valueOf(1), 12));
         assertEquals(Piece.BRICK, game.getPlayers().get(0).getSquares().get(12));
-        assertFalse(game.getPlayers().get(0).getTurnToPlace());
         assertEquals(GameStep.TO_PLACE, game.getStep());
         verify(gameDao, times(1)).save(game);
     }
@@ -263,6 +266,8 @@ public class GameServiceTest {
         game.setStep(GameStep.TO_PLACE);
         game.setResource(Piece.BRICK);
         game.getPlayers().get(0).setPlayerStep(PlayerStep.PLACE);
+
+        when(gameDao.findByCode("123")).thenReturn(game);
 
         assertThrows(InvalidMoveException.class, () -> gameService.placePiece("123", Long.valueOf(1), 18));
         verify(gameDao, times(0)).save(game);

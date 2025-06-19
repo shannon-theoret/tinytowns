@@ -1,39 +1,18 @@
-package com.shannontheoret.tinytowns.entity;
+package com.shannontheoret.tinytowns.dto;
 
-import com.shannontheoret.tinytowns.Building;
 import com.shannontheoret.tinytowns.BuildingName;
 import com.shannontheoret.tinytowns.GameStep;
 import com.shannontheoret.tinytowns.Piece;
 
-import javax.persistence.*;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
-@Entity (name="game")
-public class JPAGame {
-
-    @Id
-    @Column
+public class GameDto {
     private String code;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "game")
-    @OrderBy("player_order")
-    private List<JPAPlayer> players = new ArrayList<>();
-
-
-    @Column
-    @Enumerated(EnumType.STRING)
+    private List<PlayerDto> players;
     private GameStep step;
-
-    @Column
-    @Enumerated(EnumType.STRING)
     private Piece resource;
-
-    @ElementCollection
-    @CollectionTable(name="card", joinColumns = @JoinColumn(name = "game"))
-    @MapKeyColumn(name="piece")
-    @Column(name="building")
-    @Enumerated(EnumType.STRING)
-    private Map<Piece, BuildingName> cards = new EnumMap<>(Piece.class);
+    private Map<Piece, BuildingName> cards;
 
     public String getCode() {
         return code;
@@ -43,11 +22,11 @@ public class JPAGame {
         this.code = code;
     }
 
-    public List<JPAPlayer> getPlayers() {
+    public List<PlayerDto> getPlayers() {
         return players;
     }
 
-    public void setPlayers(List<JPAPlayer> players) {
+    public void setPlayers(List<PlayerDto> players) {
         this.players = players;
     }
 
@@ -74,5 +53,4 @@ public class JPAGame {
     public void setCards(Map<Piece, BuildingName> cards) {
         this.cards = cards;
     }
-    
 }

@@ -1,6 +1,7 @@
 package com.shannontheoret.tinytowns.controller;
 
 import com.shannontheoret.tinytowns.*;
+import com.shannontheoret.tinytowns.dto.GameDto;
 import com.shannontheoret.tinytowns.entity.JPAGame;
 import com.shannontheoret.tinytowns.exceptions.GameCodeNotFoundException;
 import com.shannontheoret.tinytowns.exceptions.InternalGameException;
@@ -14,7 +15,7 @@ import java.util.Set;
 @RestController
 public class GameController {
 
-    private GameService gameService;
+    private final GameService gameService;
 
     @Autowired
     public GameController(GameService gameService) {
@@ -22,43 +23,56 @@ public class GameController {
     }
 
     @GetMapping("{gameCode}")
-    public JPAGame getGame(@PathVariable("gameCode") String gameCode) throws GameCodeNotFoundException {
+    public GameDto getGame(@PathVariable("gameCode") String gameCode) throws GameCodeNotFoundException {
         return gameService.findByCode(gameCode);
     }
 
     @PostMapping("newGame")
-    public JPAGame newGame() {
+    public GameDto newGame() {
         return gameService.newGame();
     }
 
     @PostMapping("{gameCode}/addPlayer")
-    public JPAGame addPlayer(@PathVariable("gameCode") String gameCode, @RequestParam String playerName) throws InvalidMoveException, GameCodeNotFoundException {
+    public GameDto addPlayer(@PathVariable("gameCode") String gameCode,
+                             @RequestParam String playerName)
+            throws InvalidMoveException, GameCodeNotFoundException {
         return gameService.addPlayer(gameCode, playerName);
     }
 
     @PostMapping("{gameCode}/startGame")
-    public JPAGame startGame(@PathVariable("gameCode") String gameCode) throws InvalidMoveException, GameCodeNotFoundException {
+    public GameDto startGame(@PathVariable("gameCode") String gameCode)
+            throws InvalidMoveException, GameCodeNotFoundException {
         return gameService.startGame(gameCode);
     }
 
     @PostMapping("{gameCode}/namePiece")
-    public JPAGame namePiece(@PathVariable("gameCode") String gameCode, @RequestParam Piece piece) throws InvalidMoveException, GameCodeNotFoundException {
+    public GameDto namePiece(@PathVariable("gameCode") String gameCode,
+                             @RequestParam Piece piece)
+            throws InvalidMoveException, GameCodeNotFoundException {
         return gameService.namePiece(gameCode, piece);
     }
 
     @PostMapping("{gameCode}/placePiece")
-    public JPAGame placePiece(@PathVariable("gameCode") String gameCode, @RequestParam Long playerId, @RequestParam Integer gridIndex) throws GameCodeNotFoundException, InvalidMoveException, InternalGameException {
+    public GameDto placePiece(@PathVariable("gameCode") String gameCode,
+                              @RequestParam Long playerId,
+                              @RequestParam Integer gridIndex)
+            throws GameCodeNotFoundException, InvalidMoveException, InternalGameException {
         return gameService.placePiece(gameCode, playerId, gridIndex);
     }
 
     @PostMapping("{gameCode}/buildPiece")
-    public JPAGame build(@PathVariable("gameCode") String gameCode, @RequestParam Long playerId, @RequestParam Integer gridIndex, @RequestBody Set<Integer> indexes, @RequestParam BuildingName building) throws GameCodeNotFoundException, InvalidMoveException, InternalGameException {
+    public GameDto build(@PathVariable("gameCode") String gameCode,
+                         @RequestParam Long playerId,
+                         @RequestParam Integer gridIndex,
+                         @RequestBody Set<Integer> indexes,
+                         @RequestParam BuildingName building)
+            throws GameCodeNotFoundException, InvalidMoveException, InternalGameException {
         return gameService.build(gameCode, playerId, gridIndex, indexes, building);
     }
 
     @PostMapping("{gameCode}/endTurn")
-    public JPAGame endTurn(@PathVariable("gameCode") String gameCode) throws InternalGameException, GameCodeNotFoundException, InvalidMoveException {
+    public GameDto endTurn(@PathVariable("gameCode") String gameCode)
+            throws InternalGameException, GameCodeNotFoundException, InvalidMoveException {
         return gameService.endTurn(gameCode);
     }
-
 }

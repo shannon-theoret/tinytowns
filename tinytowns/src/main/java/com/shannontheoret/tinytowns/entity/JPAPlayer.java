@@ -7,9 +7,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity (name="player")
@@ -33,13 +31,13 @@ public class JPAPlayer {
     @MapKeyColumn(name="square_index")
     @Column(name="piece")
     @Enumerated(EnumType.STRING)
-    private Map<Integer, Piece> squares;
+    private Map<Integer, Piece> squares = new HashMap<>();
 
     @ElementCollection
     @CollectionTable(name="score", joinColumns = @JoinColumn(name = "player"))
     @MapKeyColumn(name="piece")
     @Column(name="scoreNumber")
-    private Map<Piece, Integer> score;
+    private Map<Piece, Integer> score = new EnumMap<>(Piece.class);
 
     @Column(name="scorePenalty")
     private Integer scorePenalty;
@@ -49,9 +47,6 @@ public class JPAPlayer {
 
     @Column(name="masterBuilder")
     private boolean masterBuilder;
-
-    @Column(name="turnToPlace")
-    private boolean turnToPlace;
 
     @Column(name="player_step")
     @Enumerated(EnumType.STRING)
@@ -119,14 +114,6 @@ public class JPAPlayer {
 
     public void setMasterBuilder(Boolean masterBuilder) {
         this.masterBuilder = masterBuilder;
-    }
-
-    public Boolean getTurnToPlace() {
-        return turnToPlace;
-    }
-
-    public void setTurnToPlace(Boolean turnToPlace) {
-        this.turnToPlace = turnToPlace;
     }
 
     public PlayerStep getPlayerStep() {
