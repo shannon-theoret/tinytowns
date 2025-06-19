@@ -26,4 +26,6 @@
     width: 20px;
     height: 20px;
     object-fit: cover;
+    box-shadow: 0 4px 8px black;
+    user-select: none;
 }
