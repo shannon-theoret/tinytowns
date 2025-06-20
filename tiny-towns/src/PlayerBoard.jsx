@@ -7,7 +7,7 @@ import Dropdown from "./Dropdown";
 import { buildingCardMap } from "./data/buildingCardMap";
 import masterBuilderImg from './img/master_builder.png';
 
-export default function PlayerBoard({handlePlacePiece, handleBuild, step, player, buildings}) {
+export default function PlayerBoard({handlePlacePiece, handleBuild, step, player, buildings, isCurrentPlayer}) {
 
     const [indexToPlace, setIndexToPlace] = useState();
     const [indexToBuild, setIndexToBuild] = useState();
@@ -36,7 +36,7 @@ export default function PlayerBoard({handlePlacePiece, handleBuild, step, player
     return (
         <div className="player">
           <h4 className="player-name">
-            {player.name}
+            {player.name}{isCurrentPlayer && ' (you)'}
             {player.masterBuilder && <img className="master-builder" src={masterBuilderImg} alt="master builder"/>}
             </h4>
       
@@ -51,10 +51,11 @@ export default function PlayerBoard({handlePlacePiece, handleBuild, step, player
               setIndexToBuild={setIndexToBuild}
               indexesToBuild={indexesToBuild}
               setIndexesToBuild={setIndexesToBuild}
+              isCurrentPlayer={isCurrentPlayer}
             />
           </div>
       
-          {player.playerStep === "PLACE" && (
+          {player.playerStep === "PLACE" && isCurrentPlayer && (
             <>
             <div className="building-options"></div>
             <Button
@@ -67,10 +68,11 @@ export default function PlayerBoard({handlePlacePiece, handleBuild, step, player
             </>
           )}
       
-          {player.playerStep === "BUILD" && (
+          {player.playerStep === "BUILD" && isCurrentPlayer && (
             <>
               <div className="building-options">
                 <Dropdown
+                    prompt="Select a building to build"
                     options={buildingOptions}
                     onChange={handleBuildingSelection}
                     initialValue={buildingSelected}

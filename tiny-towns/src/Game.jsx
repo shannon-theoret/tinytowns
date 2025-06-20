@@ -11,16 +11,12 @@ import api from "./api";
 import Setup from "./Setup";
 import ErrorBox from "./ErrorBox";
 import Moves from "./Moves";
+import SockJS from 'sockjs-client';
+import { Client } from '@stomp/stompjs';
+import SelectPlayer from "./SelectPlayer";
 
 export default function Game() {
 
-    const instructionMap = {
-        "SETUP": "Add players and click Start Game when ready to begin",
-        "TO_NAME": "Master builder name a type of resource",
-        "TO_PLACE": "Players place your resource. Click on a square on the grid where you would like to place the piece.",
-        "TO_BUILD": "Players may construct any buildings for which they have the matching resources in the correct shape. Select the building card and the corresponding resources on grid. Or end turn. Click on a square on the grid where you would like to place the piece. Then select the squares with the resources you would like to use.",
-        "END_GAME": "The game has ended. See the scores below."
-    }
     const {code} = useParams();
 
     const [errorMessage, setErrorMessage] = useState('');
@@ -34,22 +30,67 @@ export default function Game() {
         }
     );
 
+    const [needToSelectUser, setNeedToSelectUser] = useState(false);
+
+    const [currentPlayerId, setCurrentPlayerId] = useState(() => {
+      return localStorage.getItem(`playerId-${code}`) || '';
+    });
+
     useEffect(() => {
         api.refresh(code)
         .then((response) => {
             setGame(response.data);
+            const storedId = localStorage.getItem(`playerId-${code}`) || '';
+            setCurrentPlayerId(storedId);
+            if(storedId === '' && response.data.step !== 'SETUP') {
+              setNeedToSelectUser(true);
+            }
         }).catch(error => {
             setErrorMessage(error.userMessage);
         })
     }, [code]);
 
     useEffect(() => {
+        const socket = new SockJS('http://localhost:8080/ws');
+        const stompClient = new Client({
+            webSocketFactory: () => socket,
+            reconnectDelay: 5000,
+            onConnect: () => {
+                stompClient.subscribe(`/topic/games/${code}`, message => {
+                    const updatedGame = JSON.parse(message.body);
+                    setGame(updatedGame);
+                });
+            },
+            onStompError: (frame) => {
+                console.error("STOMP error", frame.headers["message"], frame.body);
+            }
+        });
+    
+        stompClient.activate();
+    
+        return () => {
+            stompClient.deactivate();
+        };
+    }, [code]);
+
+    useEffect(() => {
         setErrorMessage('');
     }, [game]);
       
+    const handleSelectCurrentPlayerId = (id) => {
+      localStorage.setItem(`playerId-${code}`, id);
+      setCurrentPlayerId(id);
+    }
+
+    const handleJoinGame = (id) => {
+      handleSelectCurrentPlayerId(id);
+      setNeedToSelectUser(false);
+    }
+
     const handleAddPlayer = (playerName) => {
         api.addPlayer(code, playerName).then((response) => {
-          setGame(response.data);
+          setGame(response.data.game);
+          handleSelectCurrentPlayerId(response.data.playerId);
           setErrorMessage("");
         }).catch(error => {
           setErrorMessage(error.userMessage || "Unable to add player.");
@@ -105,11 +146,12 @@ export default function Game() {
       };
 
     const masterBuilder = game.players.find(player => player.masterBuilder);
+    const currentPlayer = game.players.find(player => player.id == currentPlayerId);
 
     const cards = Object.values(game.cards);
 
     const playerBoards = game.players.map(player => {
-        return <PlayerBoard key={player.id} handlePlacePiece={handlePlacePiece} handleBuild={handleBuild} step={game.step} player={player} buildings={cards}/>;
+        return <PlayerBoard key={player.id} handlePlacePiece={handlePlacePiece} handleBuild={handleBuild} step={game.step} player={player} buildings={cards} isCurrentPlayer={player.id == currentPlayerId}/>;
     })
 
     return <div className="game">
@@ -119,9 +161,15 @@ export default function Game() {
             handleAddPlayer={handleAddPlayer}
             handleStartGame={handleStartGame}
             errorMessage={errorMessage}
+            currentPlayerId={currentPlayerId}
         />
         :
             <>
+                {needToSelectUser && 
+                <SelectPlayer 
+                    players={game.players} 
+                    handleJoinGame={handleJoinGame}>
+                </SelectPlayer>}
                 <BuildingCards cards={cards}></BuildingCards>
                 <ErrorBox message={errorMessage}></ErrorBox>
                 <Moves
@@ -130,6 +178,7 @@ export default function Game() {
                     handleNamePiece={handleNamePiece}
                     handleEndTurn={handleEndTurn}
                     resource={game.resource}
+                    currentPlayer={currentPlayer}
                 ></Moves>
                  {
                     game.step == "END_GAME" &&

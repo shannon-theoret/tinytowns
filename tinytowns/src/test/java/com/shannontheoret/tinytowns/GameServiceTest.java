@@ -14,6 +14,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.*;
 
@@ -31,6 +34,18 @@ public class GameServiceTest {
 
     GameMapper gameMapper;
 
+    private SimpMessagingTemplate messagingTemplate = new SimpMessagingTemplate(new MessageChannel() {
+        @Override
+        public boolean send(Message<?> message) {
+            return true;
+        }
+
+        @Override
+        public boolean send(Message<?> message, long timeout) {
+            return true;
+        }
+    });
+
     @InjectMocks
     private GameServiceImpl gameService;
 
@@ -40,7 +55,7 @@ public class GameServiceTest {
         buildingMap.init();
         gameMapper = new GameMapper();
         MockitoAnnotations.openMocks(this);
-        gameService = new GameServiceImpl(gameDao, buildingMap, gameMapper);
+        gameService = new GameServiceImpl(gameDao, buildingMap, gameMapper, messagingTemplate);
     }
 
     @Test

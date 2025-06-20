@@ -11,6 +11,6 @@ public interface GameDao {
 
     public void save(JPAGame game);
 
-    public void deleteByCode(String code);
+    public void flush();
 
 }

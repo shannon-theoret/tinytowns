@@ -1,6 +1,7 @@
 package com.shannontheoret.tinytowns.controller;
 
 import com.shannontheoret.tinytowns.*;
+import com.shannontheoret.tinytowns.dto.AddPlayerResponseDto;
 import com.shannontheoret.tinytowns.dto.GameDto;
 import com.shannontheoret.tinytowns.entity.JPAGame;
 import com.shannontheoret.tinytowns.exceptions.GameCodeNotFoundException;
@@ -12,6 +13,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
+@CrossOrigin(
+        origins = {"https://tinytowns.shannontheoret.com", "http://localhost:5173"},
+        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE},
+        allowCredentials = "true"
+)
 @RestController
 public class GameController {
 
@@ -33,8 +39,8 @@ public class GameController {
     }
 
     @PostMapping("{gameCode}/addPlayer")
-    public GameDto addPlayer(@PathVariable("gameCode") String gameCode,
-                             @RequestParam String playerName)
+    public AddPlayerResponseDto addPlayer(@PathVariable("gameCode") String gameCode,
+                                          @RequestParam String playerName)
             throws InvalidMoveException, GameCodeNotFoundException {
         return gameService.addPlayer(gameCode, playerName);
     }

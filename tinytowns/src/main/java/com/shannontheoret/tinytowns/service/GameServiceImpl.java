@@ -2,6 +2,7 @@ package com.shannontheoret.tinytowns.service;
 
 import com.shannontheoret.tinytowns.*;
 import com.shannontheoret.tinytowns.dao.GameDao;
+import com.shannontheoret.tinytowns.dto.AddPlayerResponseDto;
 import com.shannontheoret.tinytowns.dto.GameDto;
 import com.shannontheoret.tinytowns.entity.JPAGame;
 import com.shannontheoret.tinytowns.entity.JPAPlayer;
@@ -10,6 +11,7 @@ import com.shannontheoret.tinytowns.exceptions.InternalGameException;
 import com.shannontheoret.tinytowns.exceptions.InvalidMoveException;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -21,12 +23,14 @@ public class GameServiceImpl implements GameService {
     private GameDao gameDao;
     private BuildingMap buildingMap;
     private GameMapper gameMapper;
+    private SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    public GameServiceImpl(GameDao gameDao, BuildingMap buildingMap, GameMapper gameMapper) {
+    public GameServiceImpl(GameDao gameDao, BuildingMap buildingMap, GameMapper gameMapper, SimpMessagingTemplate messagingTemplate) {
         this.gameDao = gameDao;
         this.buildingMap = buildingMap;
         this.gameMapper = gameMapper;
+        this.messagingTemplate = messagingTemplate;
     }
 
     private static final Random RANDOM = new Random();
@@ -60,27 +64,32 @@ public class GameServiceImpl implements GameService {
         game.setCode(generateCode());
         game.setStep(GameStep.SETUP);
         save(game);
-        return gameMapper.toDto(game);
+        GameDto gameDto = gameMapper.toDto(game);
+        messagingTemplate.convertAndSend("/topic/games/" + game.getCode(), gameDto);
+        return gameDto;
     }
 
     @Override
     @Transactional
-    public GameDto addPlayer(String gameCode, String playerName) throws InvalidMoveException, GameCodeNotFoundException {
+    public AddPlayerResponseDto addPlayer(String gameCode, String playerName) throws InvalidMoveException, GameCodeNotFoundException {
         JPAGame game = findGameEntityByCode(gameCode);
         if (game.getStep() != GameStep.SETUP) {
             throw new InvalidMoveException("Game is not in the setup phase.");
         }
+        JPAPlayer player = new JPAPlayer();
         if (Rules.MAX_PLAYERS > game.getPlayers().size()) {
-            JPAPlayer player = new JPAPlayer();
             player.setName(playerName);
             player.setGame(game);
             player.setPlayerOrder(game.getPlayers().size());
             game.getPlayers().add(player);
             save(game);
+            gameDao.flush();
         } else {
             throw new InvalidMoveException("Maximum player count of " + Rules.MAX_PLAYERS + " has already been reached.");
         }
-        return gameMapper.toDto(game);
+        GameDto gameDto = gameMapper.toDto(game);
+        messagingTemplate.convertAndSend("/topic/games/" + game.getCode(), gameDto);
+        return new AddPlayerResponseDto(gameDto, player.getId());
     }
 
     @Override
@@ -105,7 +114,9 @@ public class GameServiceImpl implements GameService {
         } else {
             throw new InvalidMoveException("Require " + (Rules.MIN_PLAYERS - game.getPlayers().size()) + " more players to start game.");
         }
-        return gameMapper.toDto(game);
+        GameDto gameDto = gameMapper.toDto(game);
+        messagingTemplate.convertAndSend("/topic/games/" + game.getCode(), gameDto);
+        return gameDto;
     }
 
     @Override
@@ -126,7 +137,9 @@ public class GameServiceImpl implements GameService {
             }
         }
         save(game);
-        return gameMapper.toDto(game);
+        GameDto gameDto = gameMapper.toDto(game);
+        messagingTemplate.convertAndSend("/topic/games/" + game.getCode(), gameDto);
+        return gameDto;
     }
 
     @Override
@@ -153,7 +166,9 @@ public class GameServiceImpl implements GameService {
             game.setStep(GameStep.TO_BUILD);
         }
         save(game);
-        return gameMapper.toDto(game);
+        GameDto gameDto = gameMapper.toDto(game);
+        messagingTemplate.convertAndSend("/topic/games/" + game.getCode(), gameDto);
+        return gameDto;
     }
 
     @Override
@@ -184,7 +199,9 @@ public class GameServiceImpl implements GameService {
             throw new InvalidMoveException("Cannot build " + buildingName + " at grid index of " + gridIndex);
         }
         save(game);
-        return gameMapper.toDto(game);
+        GameDto gameDto = gameMapper.toDto(game);
+        messagingTemplate.convertAndSend("/topic/games/" + game.getCode(), gameDto);
+        return gameDto;
     }
 
     @Override
@@ -226,7 +243,9 @@ public class GameServiceImpl implements GameService {
             game.setStep(GameStep.TO_NAME);
         }
         save(game);
-        return gameMapper.toDto(game);
+        GameDto gameDto = gameMapper.toDto(game);
+        messagingTemplate.convertAndSend("/topic/games/" + game.getCode(), gameDto);
+        return gameDto;
     }
 
     private static String generateCode() {

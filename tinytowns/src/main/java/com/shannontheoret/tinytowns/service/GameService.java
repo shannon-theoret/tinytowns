@@ -1,6 +1,7 @@
 package com.shannontheoret.tinytowns.service;
 
 import com.shannontheoret.tinytowns.*;
+import com.shannontheoret.tinytowns.dto.AddPlayerResponseDto;
 import com.shannontheoret.tinytowns.dto.GameDto;
 import com.shannontheoret.tinytowns.entity.JPAGame;
 import com.shannontheoret.tinytowns.exceptions.GameCodeNotFoundException;
@@ -21,7 +22,7 @@ public interface GameService {
 
     GameDto newGame();
 
-    GameDto addPlayer(String gameCode, String playerName)
+    AddPlayerResponseDto addPlayer(String gameCode, String playerName)
             throws InvalidMoveException, GameCodeNotFoundException;
 
     GameDto startGame(String gameCode)

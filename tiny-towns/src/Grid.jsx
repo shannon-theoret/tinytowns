@@ -1,7 +1,7 @@
 import './Grid.css';
 import Square from './Square';
 import gridBackground from './img/board.png';
-export default function Grid({playerId, squares, step, indexToPlace, setIndexToPlace, indexToBuild, setIndexToBuild, indexesToBuild, setIndexesToBuild}) {
+export default function Grid({squares, step, indexToPlace, setIndexToPlace, indexToBuild, setIndexToBuild, indexesToBuild, setIndexesToBuild, isCurrentPlayer}) {
 
     return <div className="grid" style={{backgroundImage: `url(${gridBackground})`}}>
         <div className="grid-column">
@@ -15,6 +15,7 @@ export default function Grid({playerId, squares, step, indexToPlace, setIndexToP
                 indexesToBuild={indexesToBuild} 
                 setIndexesToBuild={setIndexesToBuild}
                 squares={squares}
+                isCurrentPlayer={isCurrentPlayer}
             ></Square>
             <Square 
                 index={4} 
@@ -26,6 +27,7 @@ export default function Grid({playerId, squares, step, indexToPlace, setIndexToP
                 indexesToBuild={indexesToBuild} 
                 setIndexesToBuild={setIndexesToBuild}
                 squares={squares}
+                isCurrentPlayer={isCurrentPlayer}
             ></Square>
             <Square 
                 index={8} 
@@ -37,6 +39,7 @@ export default function Grid({playerId, squares, step, indexToPlace, setIndexToP
                 indexesToBuild={indexesToBuild} 
                 setIndexesToBuild={setIndexesToBuild}
                 squares={squares}
+                isCurrentPlayer={isCurrentPlayer}
             ></Square>
             <Square 
                 index={12} 
@@ -48,6 +51,7 @@ export default function Grid({playerId, squares, step, indexToPlace, setIndexToP
                 indexesToBuild={indexesToBuild} 
                 setIndexesToBuild={setIndexesToBuild}
                 squares={squares}
+                isCurrentPlayer={isCurrentPlayer}
             ></Square>
         </div>
         <div className="grid-column">
@@ -61,6 +65,7 @@ export default function Grid({playerId, squares, step, indexToPlace, setIndexToP
                 indexesToBuild={indexesToBuild} 
                 setIndexesToBuild={setIndexesToBuild}
                 squares={squares}
+                isCurrentPlayer={isCurrentPlayer}
             ></Square>
             <Square 
                 index={5} 
@@ -72,6 +77,7 @@ export default function Grid({playerId, squares, step, indexToPlace, setIndexToP
                 indexesToBuild={indexesToBuild} 
                 setIndexesToBuild={setIndexesToBuild}
                 squares={squares}
+                isCurrentPlayer={isCurrentPlayer}
             ></Square>            
             <Square 
                 index={9} 
@@ -83,6 +89,7 @@ export default function Grid({playerId, squares, step, indexToPlace, setIndexToP
                 indexesToBuild={indexesToBuild} 
                 setIndexesToBuild={setIndexesToBuild}
                 squares={squares}
+                isCurrentPlayer={isCurrentPlayer}
             ></Square>
             <Square 
                 index={13} 
@@ -94,6 +101,7 @@ export default function Grid({playerId, squares, step, indexToPlace, setIndexToP
                 indexesToBuild={indexesToBuild} 
                 setIndexesToBuild={setIndexesToBuild}
                 squares={squares}
+                isCurrentPlayer={isCurrentPlayer}
             ></Square>
         </div>
         <div className="grid-column">
@@ -107,6 +115,7 @@ export default function Grid({playerId, squares, step, indexToPlace, setIndexToP
                 indexesToBuild={indexesToBuild} 
                 setIndexesToBuild={setIndexesToBuild}
                 squares={squares}
+                isCurrentPlayer={isCurrentPlayer}
             ></Square>            
             <Square 
                 index={6}
@@ -118,6 +127,7 @@ export default function Grid({playerId, squares, step, indexToPlace, setIndexToP
                 indexesToBuild={indexesToBuild} 
                 setIndexesToBuild={setIndexesToBuild}
                 squares={squares}
+                isCurrentPlayer={isCurrentPlayer}
             ></Square>
             <Square 
                 index={10} step={step} 
@@ -128,6 +138,7 @@ export default function Grid({playerId, squares, step, indexToPlace, setIndexToP
                 indexesToBuild={indexesToBuild} 
                 setIndexesToBuild={setIndexesToBuild}
                 squares={squares}
+                isCurrentPlayer={isCurrentPlayer}
             ></Square>
             <Square 
                 index={14}
@@ -139,6 +150,7 @@ export default function Grid({playerId, squares, step, indexToPlace, setIndexToP
                 indexesToBuild={indexesToBuild} 
                 setIndexesToBuild={setIndexesToBuild}
                 squares={squares}
+                isCurrentPlayer={isCurrentPlayer}
             ></Square>    
         </div>
         <div className="grid-column">
@@ -152,6 +164,7 @@ export default function Grid({playerId, squares, step, indexToPlace, setIndexToP
                 indexesToBuild={indexesToBuild} 
                 setIndexesToBuild={setIndexesToBuild}
                 squares={squares}
+                isCurrentPlayer={isCurrentPlayer}
             ></Square>            
             <Square 
                 index={7}
@@ -163,6 +176,7 @@ export default function Grid({playerId, squares, step, indexToPlace, setIndexToP
                 indexesToBuild={indexesToBuild} 
                 setIndexesToBuild={setIndexesToBuild}
                 squares={squares}
+                isCurrentPlayer={isCurrentPlayer}
             ></Square>
             <Square 
                 index={11} step={step} 
@@ -173,6 +187,7 @@ export default function Grid({playerId, squares, step, indexToPlace, setIndexToP
                 indexesToBuild={indexesToBuild} 
                 setIndexesToBuild={setIndexesToBuild}
                 squares={squares}
+                isCurrentPlayer={isCurrentPlayer}
             ></Square>
             <Square 
                 index={15}
@@ -184,6 +199,7 @@ export default function Grid({playerId, squares, step, indexToPlace, setIndexToP
                 indexesToBuild={indexesToBuild} 
                 setIndexesToBuild={setIndexesToBuild}
                 squares={squares}
+                isCurrentPlayer={isCurrentPlayer}
             ></Square>    
         </div>
     </div>;

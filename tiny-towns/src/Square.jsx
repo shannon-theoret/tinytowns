@@ -1,6 +1,6 @@
 import { imgMap } from './data/imageMap';
 import './Square.css';
-export default function Square({index, step, indexToPlace, setIndexToPlace, indexToBuild, setIndexToBuild, indexesToBuild, setIndexesToBuild, squares}) {
+export default function Square({index, step, indexToPlace, setIndexToPlace, indexToBuild, setIndexToBuild, indexesToBuild, setIndexesToBuild, squares, isCurrentPlayer}) {
 
     let selected = false;
     let alsoSelected = false;
@@ -35,11 +35,12 @@ export default function Square({index, step, indexToPlace, setIndexToPlace, inde
     }
 
     let onClick = null;
-    if (step === "PLACE") {
+    if (step === "PLACE" && isCurrentPlayer) {
         onClick = changeIndexToPlace;
     }
-    if (step === "BUILD") {
+    if (step === "BUILD" && isCurrentPlayer) {
         onClick = selectIndexToBuild;
     }
+
     return <span className={squareClass} onClick={onClick}>{imgMap[squares[index]]}</span>;
 }

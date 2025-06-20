@@ -3,11 +3,11 @@ import AddPlayer from "./AddPlayer";
 import Button from "./Button";
 import './Setup.css';
 
-export default function Setup({players, handleAddPlayer, handleStartGame, errorMessage}) {
+export default function Setup({players, handleAddPlayer, handleStartGame, errorMessage, currentPlayerId}) {
+
     return (
         <div className="setup">
           {errorMessage && <ErrorBox message={errorMessage} />}
-    
           <p className="setup-instructions">Add players and click Start Game when ready to begin:</p>
     
           <div className="player-list">
@@ -16,7 +16,7 @@ export default function Setup({players, handleAddPlayer, handleStartGame, errorM
             ))}
           </div>
     
-          <AddPlayer handleAddPlayer={handleAddPlayer} />
+          {!currentPlayerId && <AddPlayer handleAddPlayer={handleAddPlayer} />}
     
           <Button onClick={handleStartGame} className="mt-3">
             Start Game

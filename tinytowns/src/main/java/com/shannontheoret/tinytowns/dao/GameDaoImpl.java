@@ -40,7 +40,8 @@ public class GameDaoImpl implements GameDao {
     }
 
     @Override
-    public void deleteByCode(String code) {
-
+    public void flush() {
+        Session currentSession = entityManager.unwrap(Session.class);
+        currentSession.flush();
     }
 }
