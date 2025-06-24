@@ -1,6 +1,5 @@
 import { useState, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
 import './Header.css';
 import logo from './img/tiny-towns-logo.png';
 import api from './api';
