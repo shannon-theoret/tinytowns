@@ -30,11 +30,12 @@ export default function Game() {
         }
     );
 
-    const [needToSelectUser, setNeedToSelectUser] = useState(false);
-
     const [currentPlayerId, setCurrentPlayerId] = useState(() => {
       return localStorage.getItem(`playerId-${code}`) || '';
     });
+
+    const [needToSelectUser, setNeedToSelectUser] = useState(currentPlayerId === '');
+
 
     useEffect(() => {
         api.refresh(code)
