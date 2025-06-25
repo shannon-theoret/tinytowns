@@ -28,7 +28,6 @@ tiny-towns/*.pid.lock
 tiny-towns/.DS_Store
 tiny-towns/.eslintrc.cjs
 
-tinytowns/.mvn/
 tinytowns/target/
 tinytowns/.idea/
 tinytowns/.vscode/
@@ -36,5 +35,4 @@ tinytowns/.DS_Store
 tinytowns/Thumbs.db
 tinytowns/*.iml
 tinytowns/HELP.md
-tinytowns/mvnw
-tinytowns/mvnw.cmd
+
