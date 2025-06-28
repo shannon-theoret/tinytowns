@@ -81,6 +81,7 @@ export default function Game() {
     const handleSelectCurrentPlayerId = (id) => {
       localStorage.setItem(`playerId-${code}`, id);
       setCurrentPlayerId(id);
+      setNeedToSelectUser(false);
     }
 
     const handleJoinGame = (id) => {
