@@ -7,7 +7,7 @@ import NamePiece from "./NamePiece";
 import BuildingCards from "./BuildingCards";
 import SingleNamePiece from "./SingleNamePiece";
 import Score from "./Score";
-import api from "./api";
+import api, {API_BASE_URL} from "./api";
 import Setup from "./Setup";
 import ErrorBox from "./ErrorBox";
 import Moves from "./Moves";
@@ -52,7 +52,7 @@ export default function Game() {
     }, [code]);
 
     useEffect(() => {
-        const socket = new SockJS('http://localhost:8080/ws');
+        const socket = new SockJS(`${API_BASE_URL}/ws`);
         const stompClient = new Client({
             webSocketFactory: () => socket,
             reconnectDelay: 5000,
