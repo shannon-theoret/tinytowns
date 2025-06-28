@@ -163,6 +163,7 @@ export default function Game() {
             handleStartGame={handleStartGame}
             errorMessage={errorMessage}
             currentPlayerId={currentPlayerId}
+            code={code}
         />
         :
             <>
