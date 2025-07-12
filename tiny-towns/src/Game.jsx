@@ -52,7 +52,7 @@ export default function Game() {
     }, [code]);
 
     useEffect(() => {
-        const socket = new SockJS(`${API_BASE_URL.replace('http', 'https')}/ws`);
+        const socket = new SockJS(`${API_BASE_URL}/ws`);
         const stompClient = new Client({
             webSocketFactory: () => socket,
             reconnectDelay: 5000,
