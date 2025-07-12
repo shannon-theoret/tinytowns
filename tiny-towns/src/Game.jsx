@@ -52,10 +52,12 @@ export default function Game() {
     }, [code]);
 
     useEffect(() => {
-        const socket = new SockJS(`${API_BASE_URL}/ws`);
+        const socket = new SockJS(`${API_BASE_URL.replace('http', 'https')}/ws`);
         const stompClient = new Client({
             webSocketFactory: () => socket,
             reconnectDelay: 5000,
+            heartbeatIncoming: 10000,
+            heartbeatOutgoing: 10000,
             onConnect: () => {
                 stompClient.subscribe(`/topic/games/${code}`, message => {
                     const updatedGame = JSON.parse(message.body);
