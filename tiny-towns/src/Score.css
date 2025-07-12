@@ -9,6 +9,10 @@
     border: 1px solid black; /* Add border to table, th, and td */
 }
 
+.score tr {
+    height: 20px;
+}
+
 .scoreContainer {
     display: flex;
     justify-content: center;

@@ -88,7 +88,7 @@ export default function Game() {
     useEffect(() => {
       const interval = setInterval(() => {
         const minutesSinceLastUpdate = (Date.now() - lastUpdate) / 60000;
-        if (minutesSinceLastUpdate > 3) {
+        if (minutesSinceLastUpdate > 5) {
           setShowReconnectPrompt(true);
         }
       }, 30000);

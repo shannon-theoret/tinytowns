@@ -38,7 +38,7 @@ export default function Score({players, cards}) {
                 ))}
             </tr>
             <tr>
-            <td>Total Score</td>
+            <th>Total Score</th>
                 {players.map(player => (
                 <td key={player.id}>{calculateTotalScore(player)}</td>
                 ))}
