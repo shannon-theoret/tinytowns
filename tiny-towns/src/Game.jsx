@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import './Game.css';
-import Button from "./Button";
 import PlayerBoard from "./PlayerBoard";
-import NamePiece from "./NamePiece";
 import BuildingCards from "./BuildingCards";
-import SingleNamePiece from "./SingleNamePiece";
 import Score from "./Score";
 import api, {API_BASE_URL} from "./api";
 import Setup from "./Setup";
@@ -14,6 +11,7 @@ import Moves from "./Moves";
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 import SelectPlayer from "./SelectPlayer";
+import ReconnectModal from "./ReconnectModal";
 
 export default function Game() {
 
@@ -79,7 +77,25 @@ export default function Game() {
     useEffect(() => {
         setErrorMessage('');
     }, [game]);
-      
+
+    const [lastUpdate, setLastUpdate] = useState(Date.now());
+    const [showReconnectPrompt, setShowReconnectPrompt] = useState(false);
+
+    useEffect(() => {
+      setLastUpdate(Date.now());
+    }, [game]);
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        const minutesSinceLastUpdate = (Date.now() - lastUpdate) / 60000;
+        if (minutesSinceLastUpdate > 3) {
+          setShowReconnectPrompt(true);
+        }
+      }, 30000);
+
+      return () => clearInterval(interval);
+    }, [lastUpdate]);
+
     const handleSelectCurrentPlayerId = (id) => {
       localStorage.setItem(`playerId-${code}`, id);
       setCurrentPlayerId(id);
@@ -139,7 +155,6 @@ export default function Game() {
         });
       };
       
-
       const handleEndTurn = () => {
         api.endTurn(code).then((response) => {
           setGame(response.data);
@@ -148,6 +163,11 @@ export default function Game() {
           setErrorMessage(error.userMessage || "Unable to end turn.");
         });
       };
+
+      const handleRefresh = () => {
+        setShowReconnectPrompt(false);
+        window.location.reload();
+      }
 
     const masterBuilder = game.players.find(player => player.masterBuilder);
     const currentPlayer = game.players.find(player => player.id == currentPlayerId);
@@ -159,6 +179,11 @@ export default function Game() {
     })
 
     return <div className="game">
+        <ReconnectModal
+          show={showReconnectPrompt}
+          handleClose={() => setShowReconnectPrompt(false)}
+          handleRefresh={handleRefresh}
+        ></ReconnectModal>
         {game.step == "SETUP"? 
         <Setup
             players={game.players}
