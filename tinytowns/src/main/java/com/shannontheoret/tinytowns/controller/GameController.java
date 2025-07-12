@@ -9,6 +9,7 @@ import com.shannontheoret.tinytowns.exceptions.InternalGameException;
 import com.shannontheoret.tinytowns.exceptions.InvalidMoveException;
 import com.shannontheoret.tinytowns.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -80,5 +81,10 @@ public class GameController {
     public GameDto endTurn(@PathVariable("gameCode") String gameCode)
             throws InternalGameException, GameCodeNotFoundException, InvalidMoveException {
         return gameService.endTurn(gameCode);
+    }
+
+    @GetMapping("/ping")
+    public ResponseEntity<String> ping() {
+        return ResponseEntity.ok("pong");
     }
 }

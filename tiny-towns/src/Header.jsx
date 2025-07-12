@@ -1,8 +1,8 @@
-import { useState, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import './Header.css';
 import logo from './img/tiny-towns-logo.png';
-import api from './api';
+import api, {API_BASE_URL} from "./api";
 
 export default function Header() {
     const [inputtedGameCode, setInputtedGameCode] = useState('');
@@ -23,6 +23,10 @@ export default function Header() {
         navigate(`/${inputtedGameCode}`);
       }
     };
+
+    useEffect(() => {
+        fetch(`${API_BASE_URL}/ping`).catch(() => {});
+    }, []); //wake up backend
 
     return (
         <header className='app-header'>
