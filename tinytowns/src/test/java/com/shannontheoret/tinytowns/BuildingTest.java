@@ -1,5 +1,6 @@
 package com.shannontheoret.tinytowns;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,11 +10,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-@SpringBootTest
 public class BuildingTest {
 
-    @Autowired
-    BuildingMap buildingMap;
+    private BuildingMap buildingMap;
+
+    @BeforeEach
+    public void setUp() {
+        buildingMap = new BuildingMap();
+        buildingMap.init(); // manually call init to populate the map
+    }
 
     @Test
     public void isValidBuild_yellowTheatre_isValid() {
